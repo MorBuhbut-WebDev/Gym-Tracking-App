@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import AuthRoutes from "./features/auth/routes/AuthRoutes.jsx";
+import PrivateRoutes from "./routes/PrivateRoutes.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+  useMobileHeight();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/auth/*" element={<AuthRoutes />} />
+      <Route
+        path="/"
+        element={
+          <PrivateRoutes>
+            <h1>Hello From Home</h1>
+          </PrivateRoutes>
+        }
+      />
+    </Routes>
+  );
 }
 
-export default App
+function useMobileHeight() {
+  useEffect(() => {
+    const setHeight = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+    setHeight();
+
+    window.addEventListener("resize", setHeight);
+
+    return () => window.removeEventListener("resize", setHeight);
+  }, []);
+}
+
+export default App;
