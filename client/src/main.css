@@ -4,9 +4,28 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Backgrounds */
+  --color-bg-dark: #121212; /* Main dark background */
+  --color-bg-surface: #1e1e1e; /* Cards / panels */
+
+  /* Primary & Secondary Colors */
+  --color-primary: #1db954; /* Primary accent / buttons */
+  --color-secondary: #ff6b6b; /* Secondary accent / alerts */
+
+  /* Text Colors */
+  --color-text-primary: #ffffff; /* Main readable text */
+  --color-text-secondary: #b0b0b0; /* Subtle info / secondary text */
+  --color-text-disabled: #6e6e6e; /* Disabled text */
+
+  /* Interactive / Hover */
+  --color-hover: #33cc77; /* Hover / focus for primary buttons or progress bars */
+}
+
 body {
   width: 100vw;
   height: calc(100 * var(--vh));
+  background-color: var(--color-bg-dark);
   overflow: hidden;
 }
 
