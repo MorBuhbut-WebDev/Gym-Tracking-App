@@ -41,6 +41,14 @@
   gap: clamp(1rem, 1.25vw, 1.5rem);
 }
 
+.link {
+  text-decoration: none;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .landing button {
   width: 75%;
   max-width: 500px;

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "./Landing.module.css";
 
 function Landing() {
@@ -8,12 +9,16 @@ function Landing() {
         "Track your workouts and crush your fitness goals"
       </h1>
       <div className={styles.buttons}>
-        <button className={styles.signInPassword}>
-          Sign in with Email & Password
-        </button>
-        <button className={styles.signInPasswordless}>
-          Sign in with Email Link (No Password)
-        </button>
+        <Link to="/auth/register" className={styles.link} replace>
+          <button className={styles.signInPassword}>
+            Sign in with Email & Password
+          </button>
+        </Link>
+        <Link to="/auth/passwordless" className={styles.link} replace>
+          <button className={styles.signInPasswordless}>
+            Sign in with Email Link (No Password)
+          </button>
+        </Link>
       </div>
     </main>
   );

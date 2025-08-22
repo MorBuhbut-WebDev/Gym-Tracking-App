@@ -5,6 +5,7 @@ function AuthRoutes() {
   return (
     <Routes>
       <Route path="landing" element={<Landing />} />
+      <Route path="passwordless" element={<h1>Passwordless Sign-In Page</h1>} />
       <Route path="login" element={<h1>Login Page</h1>} />
       <Route path="register" element={<h1>Sign up Page</h1>} />
     </Routes>
