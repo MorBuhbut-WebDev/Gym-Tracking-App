@@ -6,7 +6,7 @@ function Landing() {
     <main className={styles.landing}>
       <p className={styles.logo}>TRACKER</p>
       <h1 className={styles.motivation}>
-        "Track your workouts and crush your fitness goals"
+        Track your workouts and crush your fitness goals
       </h1>
       <div className={styles.buttons}>
         <Link to="/auth/register" className={styles.link} replace>
