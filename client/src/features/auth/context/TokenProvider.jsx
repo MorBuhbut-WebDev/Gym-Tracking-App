@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { onIdTokenChanged } from "firebase/auth";
 import { auth } from "../services/firebase.js";
 import { useLoading } from "../../../context/LoadingProvider.jsx";
+import { getEmail } from "../pages/PasswordLess/utils.js";
 
 const TokenContext = createContext();
 
@@ -20,14 +21,14 @@ function TokenProvider({ children }) {
       } else {
         setToken("");
       }
-      setLoading(false);
+      setLoading(!(getEmail() === ""));
     });
 
     return () => unsubscribe();
   }, []);
 
   return (
-    <TokenContext.Provider value={token}>{children}</TokenContext.Provider>
+    <TokenContext.Provider value={{ token }}>{children}</TokenContext.Provider>
   );
 }
 

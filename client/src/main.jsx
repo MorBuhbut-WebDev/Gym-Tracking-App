@@ -7,13 +7,11 @@ import TokenProvider from "./features/auth/context/TokenProvider.jsx";
 import LoadingProvider from "./context/LoadingProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <LoadingProvider>
-        <TokenProvider>
-          <App />
-        </TokenProvider>
-      </LoadingProvider>
-    </BrowserRouter>
-  </StrictMode>
+  <BrowserRouter>
+    <LoadingProvider>
+      <TokenProvider>
+        <App />
+      </TokenProvider>
+    </LoadingProvider>
+  </BrowserRouter>
 );

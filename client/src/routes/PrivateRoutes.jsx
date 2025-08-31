@@ -1,13 +1,14 @@
 import { useToken } from "../features/auth/context/TokenProvider.jsx";
 import { useLoading } from "../context/LoadingProvider.jsx";
 import { Navigate } from "react-router-dom";
+import Loader from "../components/Loader/Loader.jsx";
 
 function PrivateRoutes({ children }) {
   const { token } = useToken();
   const { loading } = useLoading();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (!token) {

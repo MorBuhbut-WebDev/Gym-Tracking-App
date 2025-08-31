@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+  width: 100%;
+}
+
+.ball {
+  border-radius: 50%;
+  background: var(--color-text-primary, #333); /* fallback color */
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.ball1 {
+  width: 1rem;
+  height: 1rem;
+  animation-delay: 0s;
+}
+
+.ball2 {
+  width: 1.5rem;
+  height: 1.5rem;
+  animation-delay: 0.2s;
+}
+
+.ball3 {
+  width: 2rem;
+  height: 2rem;
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
