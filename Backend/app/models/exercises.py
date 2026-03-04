@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy.orm import mapped_column, Mapped
-from sqlalchemy import Integer, String, Date, UniqueConstraint, func, text
+from sqlalchemy import Integer, String, Date, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import date
 
@@ -11,9 +11,7 @@ class Exercise(Base):
     __tablename__ = "exercises"
 
     exercise_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    begda: Mapped[date] = mapped_column(
-        Date, nullable=False, server_default=func.current_date()
-    )
+    begda: Mapped[date] = mapped_column(Date, nullable=False, default=date.today())
     endda: Mapped[date] = mapped_column(
         Date, nullable=False, server_default=text("DATE '9999-12-31'")
     )

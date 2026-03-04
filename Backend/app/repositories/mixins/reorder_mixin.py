@@ -1,15 +1,15 @@
 from sqlalchemy import text, RowMapping
-from app.schemas import ReOrderSchema
+from app.schemas import ExerciseReorder
 
 
 class ReorderMixin:
     async def reorder_exercises(
-        self, parent_id: int, reorder_schema: ReOrderSchema
+        self, parent_id: int, payload: ExerciseReorder
     ) -> list[RowMapping]:
         await self._session.execute(
             text(f"SET CONSTRAINTS {self._model.EXERCISE_INDEX_CONSTRAINT} DEFERRED")
         )
-        exercise_ids, exercise_positions = reorder_schema.unzip()
+        exercise_ids, exercise_positions = payload.unzip()
         result = await self._session.execute(
             text(
                 f"""

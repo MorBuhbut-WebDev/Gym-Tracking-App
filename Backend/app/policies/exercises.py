@@ -8,10 +8,10 @@ from app.models import Exercise
 
 class ExercisePolicy:
     @staticmethod
-    async def assert_exercise_exists(
+    async def assert_exists(
         repo: ExerciseRepo, user_id: uuid.UUID, exercise_id: int
     ) -> Exercise:
-        exercise = await repo.get_exercise_by_id(exercise_id, user_id)
+        exercise = await repo.get_by_id(exercise_id, user_id)
 
         if exercise is None:
             raise NotFoundError(f"Exercise with id: {exercise_id} is not found")
@@ -25,7 +25,7 @@ class ExercisePolicy:
         exercise_name: str,
         exercise_id: Optional[int] = None,
     ) -> None:
-        exercise = await repo.get_exercise_by_name(exercise_name, exercise_id, user_id)
+        exercise = await repo.get_by_name(exercise_name, exercise_id, user_id)
 
         if exercise is not None:
             raise ConflictError(f"{exercise_name} already exists")

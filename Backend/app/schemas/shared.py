@@ -2,13 +2,13 @@ from pydantic import BaseModel, model_validator, PositiveInt
 from typing import Self
 
 
-class ExerciseModel(BaseModel):
+class Exercise(BaseModel):
     exercise_id: PositiveInt
     exercise_index: PositiveInt
 
 
-class ReOrderSchema(BaseModel):
-    exercises: list[ExerciseModel]
+class ExerciseReorder(BaseModel):
+    exercises: list[Exercise]
 
     def unzip(self) -> tuple[list[PositiveInt], list[PositiveInt]]:
         exercise_ids = [exercise.exercise_id for exercise in self.exercises]

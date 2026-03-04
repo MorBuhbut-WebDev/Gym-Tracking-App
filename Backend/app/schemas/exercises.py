@@ -5,19 +5,19 @@ from datetime import date
 from app.schemas.types import Name
 
 
-class BaseExerciseSchema(BaseModel):
+class ExerciseBase(BaseModel):
     exercise_name: Name
 
 
-class CreateExerciseSchema(BaseExerciseSchema):
+class ExerciseCreate(ExerciseBase):
     pass
 
 
-class UpdateExerciseSchema(BaseExerciseSchema):
+class ExerciseUpdate(ExerciseBase):
     pass
 
 
-class ReturnExerciseSchema(BaseModel):
+class ExerciseResponse(BaseModel):
     exercise_id: int
     user_id: uuid.UUID
     exercise_name: str

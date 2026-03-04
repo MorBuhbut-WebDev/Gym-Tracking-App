@@ -25,9 +25,7 @@ def upgrade() -> None:
     op.create_table(
         "exercises",
         sa.Column("exercise_id", sa.Integer(), nullable=False),
-        sa.Column(
-            "begda", sa.Date(), server_default=sa.text("CURRENT_DATE"), nullable=False
-        ),
+        sa.Column("begda", sa.Date(), nullable=False),
         sa.Column(
             "endda",
             sa.Date(),
@@ -138,32 +136,6 @@ def upgrade() -> None:
         ),
     )
     # ### end Alembic commands ###
-
-    op.execute(
-        """
-    CREATE OR REPLACE FUNCTION delete_routine_exercises_on_exercise_end()
-    RETURNS trigger AS $$
-    BEGIN
-        IF OLD.endda = DATE '9999-12-31'
-           AND NEW.endda <> DATE '9999-12-31' THEN
-            DELETE FROM routines_exercises
-            WHERE exercise_id = NEW.exercise_id;
-        END IF;
-        RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
-    """
-    )
-
-    op.execute(
-        """
-    CREATE TRIGGER trg_exercise_soft_delete
-    AFTER UPDATE OF endda
-    ON exercises
-    FOR EACH ROW
-    EXECUTE FUNCTION delete_routine_exercises_on_exercise_end();
-    """
-    )
 
 
 def downgrade() -> None:

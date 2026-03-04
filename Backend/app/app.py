@@ -13,6 +13,7 @@ app.include_router(routines_router)
 
 @app.exception_handler(BaseErrorApp)
 def domain_error_handler(req: Request, exc: BaseErrorApp):
+    print(exc)
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 

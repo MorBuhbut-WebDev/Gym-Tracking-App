@@ -1,2 +1,2 @@
-from .exercises import router as exercises_router
-from .routines import router as routines_router
+from .exercises import exercises_router
+from .routines import routines_router

@@ -1,6 +1,6 @@
-from typing import Generic, TypeVar, Type
+from typing import Generic, TypeVar, Type, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, BinaryExpression, func
+from sqlalchemy import select, BinaryExpression
 from pydantic import BaseModel
 
 from app.db import Base
@@ -19,31 +19,23 @@ class BaseRepo(Generic[Model]):
         query = select(self._model).where(condition)
         return await self._session.execute(query)
 
-    def add(self, obj: Model):
+    def add(self, obj: Model) -> Model:
         self._session.add(obj)
         return obj
 
-    async def get_all(self, condition: BinaryExpression):
+    async def get_all(self, condition: BinaryExpression) -> list[Model]:
         result = await self._execute_query(condition)
         return result.scalars().all()
 
-    # async def count_all(self, condition: BinaryExpression):
-    #     count = (
-    #         await self._session.execute(
-    #             select(func.count()).select_from(self._model).where(condition)
-    #         )
-    #     ).scalar()
-    #     return count if count is not None else 0
-
-    async def get(self, condition: BinaryExpression):
+    async def get(self, condition: BinaryExpression) -> Optional[Model]:
         result = await self._execute_query(condition)
         return result.scalar_one_or_none()
 
-    def update(self, old: Model, updated: Schema):
+    def update(self, old: Model, updated: Schema) -> Model:
         for col, value in updated.model_dump(exclude_unset=True).items():
             if hasattr(old, col):
                 setattr(old, col, value)
         return old
 
-    async def delete(self, obj: Model):
+    async def delete(self, obj: Model) -> None:
         await self._session.delete(obj)

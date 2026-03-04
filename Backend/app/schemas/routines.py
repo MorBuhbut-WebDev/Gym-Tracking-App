@@ -4,19 +4,19 @@ from pydantic import BaseModel
 from app.schemas.types import Name
 
 
-class BaseRoutineSchema(BaseModel):
+class RoutineBase(BaseModel):
     routine_name: Name
 
 
-class CreateRoutineSchema(BaseRoutineSchema):
+class RoutineCreate(RoutineBase):
     pass
 
 
-class UpdateRoutineSchema(BaseRoutineSchema):
+class RoutineUpdate(RoutineBase):
     pass
 
 
-class ReturnRoutineSchema(BaseModel):
+class RoutineResponse(BaseModel):
     routine_id: int
     user_id: uuid.UUID
     routine_name: str

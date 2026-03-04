@@ -1,16 +1,17 @@
-from pydantic import BaseModel, model_validator, PositiveInt
+from pydantic import BaseModel, model_validator, PositiveInt, ConfigDict
 from typing import Optional, Self
 
 from app.schemas.types import NotEmptyString
 
 
-class AddRoutineExerciseSchema(BaseModel):
-    exercise_index: PositiveInt
+class RoutineAddExercise(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     planned_sets: PositiveInt = 3
     exercise_notes: Optional[NotEmptyString] = None
 
 
-class UpdateRoutineExerciseSchema(BaseModel):
+class RoutineUpdateExercise(BaseModel):
     planned_sets: Optional[PositiveInt] = None
     exercise_notes: Optional[NotEmptyString] = None
 
@@ -21,7 +22,7 @@ class UpdateRoutineExerciseSchema(BaseModel):
         return self
 
 
-class ReturnRoutineExerciseSchema(BaseModel):
+class RoutineExerciseResponse(BaseModel):
     exercise_id: int
     routine_id: int
     exercise_index: int

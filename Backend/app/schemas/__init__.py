@@ -1,8 +1,8 @@
-from .exercises import CreateExerciseSchema, UpdateExerciseSchema, ReturnExerciseSchema
-from .routines import CreateRoutineSchema, UpdateRoutineSchema, ReturnRoutineSchema
+from .exercises import ExerciseCreate, ExerciseUpdate, ExerciseResponse
+from .routines import RoutineCreate, RoutineUpdate, RoutineResponse
 from .routines_exercises import (
-    AddRoutineExerciseSchema,
-    UpdateRoutineExerciseSchema,
-    ReturnRoutineExerciseSchema,
+    RoutineAddExercise,
+    RoutineUpdateExercise,
+    RoutineExerciseResponse,
 )
-from .shared import ReOrderSchema
+from .shared import ExerciseReorder

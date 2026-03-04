@@ -1,59 +1,59 @@
 from fastapi import APIRouter, Depends
 
-from app.schemas import CreateExerciseSchema, UpdateExerciseSchema, ReturnExerciseSchema
+from app.schemas import ExerciseCreate, ExerciseUpdate, ExerciseResponse
 from app.dependencies import get_user, get_uow
 from app.auth import User
 from app.db import UnitOfWork
 from app.services import ExerciseService, get_exercises_service
 
-router = APIRouter(prefix="/exercises")
+exercises_router = APIRouter(prefix="/exercises")
 
 
-@router.post("/", response_model=ReturnExerciseSchema, status_code=201)
+@exercises_router.post("/", response_model=ExerciseResponse, status_code=201)
 async def create_exercise(
-    exercise: CreateExerciseSchema,
-    user: User = Depends(get_user),
+    payload: ExerciseCreate,
     uow: UnitOfWork = Depends(get_uow),
+    user: User = Depends(get_user),
     service: ExerciseService = Depends(get_exercises_service),
-):
-    return await service.create_exercise(exercise, uow, user)
+) -> ExerciseResponse:
+    return await service.create(uow, user, payload)
 
 
-@router.get("/", response_model=list[ReturnExerciseSchema], status_code=200)
+@exercises_router.get("/", response_model=list[ExerciseResponse])
 async def get_all_exercises(
-    user: User = Depends(get_user),
     uow: UnitOfWork = Depends(get_uow),
+    user: User = Depends(get_user),
     service: ExerciseService = Depends(get_exercises_service),
-):
-    return await service.get_all_exercises(uow, user)
+) -> list[ExerciseResponse]:
+    return await service.get_all(uow, user)
 
 
-@router.get("/{exercise_id}", response_model=ReturnExerciseSchema, status_code=200)
+@exercises_router.get("/{exercise_id}", response_model=ExerciseResponse)
 async def get_exercise(
     exercise_id: int,
-    user: User = Depends(get_user),
     uow: UnitOfWork = Depends(get_uow),
+    user: User = Depends(get_user),
     service: ExerciseService = Depends(get_exercises_service),
-):
-    return await service.get_exercise(uow, user, exercise_id)
+) -> ExerciseResponse:
+    return await service.get(uow, user, exercise_id)
 
 
-@router.put("/{exercise_id}", response_model=ReturnExerciseSchema, status_code=200)
+@exercises_router.put("/{exercise_id}", response_model=ExerciseResponse)
 async def update_exercise(
     exercise_id: int,
-    new_exercise: UpdateExerciseSchema,
-    user: User = Depends(get_user),
+    payload: ExerciseUpdate,
     uow: UnitOfWork = Depends(get_uow),
+    user: User = Depends(get_user),
     service: ExerciseService = Depends(get_exercises_service),
-):
-    return await service.update_exercise(uow, user, exercise_id, new_exercise)
+) -> ExerciseResponse:
+    return await service.update(uow, user, exercise_id, payload)
 
 
-@router.delete("/{exercise_id}", status_code=204)
+@exercises_router.delete("/{exercise_id}", status_code=204)
 async def delete_exercise(
     exercise_id: int,
-    user: User = Depends(get_user),
     uow: UnitOfWork = Depends(get_uow),
+    user: User = Depends(get_user),
     service: ExerciseService = Depends(get_exercises_service),
-):
-    return await service.delete_exercise(uow, user, exercise_id)
+) -> None:
+    await service.delete(uow, user, exercise_id)
