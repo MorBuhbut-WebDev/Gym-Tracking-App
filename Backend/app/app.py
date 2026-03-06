@@ -2,13 +2,14 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.routes import exercises_router, routines_router
+from app.routes import exercises_router, routines_router, workouts_router
 from app.errors import BaseErrorApp
 
 app = FastAPI()
 
 app.include_router(exercises_router)
 app.include_router(routines_router)
+app.include_router(workouts_router)
 
 
 @app.exception_handler(BaseErrorApp)

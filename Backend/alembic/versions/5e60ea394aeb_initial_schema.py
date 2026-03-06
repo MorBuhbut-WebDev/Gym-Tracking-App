@@ -1,8 +1,8 @@
 """Initial Schema
 
-Revision ID: f494f3660093
+Revision ID: 5e60ea394aeb
 Revises:
-Create Date: 2026-03-02 14:06:27.679114
+Create Date: 2026-03-05 00:26:44.095547
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "f494f3660093"
+revision: str = "5e60ea394aeb"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,15 +25,18 @@ def upgrade() -> None:
     op.create_table(
         "exercises",
         sa.Column("exercise_id", sa.Integer(), nullable=False),
-        sa.Column("begda", sa.Date(), nullable=False),
+        sa.Column("user_id", sa.UUID(), nullable=False),
+        sa.Column(
+            "begda", sa.Date(), server_default=sa.text("CURRENT_DATE"), nullable=False
+        ),
         sa.Column(
             "endda",
             sa.Date(),
             server_default=sa.text("DATE '9999-12-31'"),
             nullable=False,
         ),
-        sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("exercise_name", sa.String(length=36), nullable=False),
+        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("exercise_id"),
         sa.UniqueConstraint(
             "user_id", "exercise_name", "endda", name="uq_user_endda_exercise_name"
@@ -44,6 +47,7 @@ def upgrade() -> None:
         sa.Column("routine_id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("routine_name", sa.String(length=36), nullable=False),
+        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("routine_id"),
         sa.UniqueConstraint("user_id", "routine_name", name="uq_user_routine_name"),
     )
@@ -55,8 +59,7 @@ def upgrade() -> None:
         sa.Column("planned_sets", sa.Integer(), nullable=False),
         sa.Column("exercise_notes", sa.String(length=128), nullable=True),
         sa.ForeignKeyConstraint(
-            ["exercise_id"],
-            ["exercises.exercise_id"],
+            ["exercise_id"], ["exercises.exercise_id"], ondelete="CASCADE"
         ),
         sa.ForeignKeyConstraint(
             ["routine_id"], ["routines.routine_id"], ondelete="CASCADE"
@@ -74,6 +77,7 @@ def upgrade() -> None:
         "workouts",
         sa.Column("workout_id", sa.Integer(), nullable=False),
         sa.Column("routine_id", sa.Integer(), nullable=True),
+        sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column(
             "created_at",
             postgresql.TIMESTAMP(timezone=True),
@@ -85,10 +89,8 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["routine_id"], ["routines.routine_id"], ondelete="SET NULL"
         ),
+        sa.ForeignKeyConstraint(["user_id"], ["users.user_id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("workout_id"),
-        sa.UniqueConstraint(
-            "routine_id", "workout_name", name="uq_routine_workout_name"
-        ),
     )
     op.create_table(
         "workouts_exercises",
@@ -96,8 +98,7 @@ def upgrade() -> None:
         sa.Column("exercise_id", sa.Integer(), nullable=False),
         sa.Column("exercise_index", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["exercise_id"],
-            ["exercises.exercise_id"],
+            ["exercise_id"], ["exercises.exercise_id"], ondelete="RESTRICT"
         ),
         sa.ForeignKeyConstraint(
             ["workout_id"], ["workouts.workout_id"], ondelete="CASCADE"
@@ -117,15 +118,13 @@ def upgrade() -> None:
         sa.Column("workout_id", sa.Integer(), nullable=False),
         sa.Column("exercise_id", sa.Integer(), nullable=False),
         sa.Column("set_index", sa.Integer(), nullable=False),
-        sa.Column("weight", sa.Float(precision=3), nullable=True),
+        sa.Column("weight", sa.Numeric(precision=6, scale=3), nullable=True),
         sa.Column("reps", sa.Integer(), nullable=True),
         sa.Column("notes", sa.String(length=128), nullable=True),
         sa.ForeignKeyConstraint(
-            ["exercise_id"],
-            ["exercises.exercise_id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["workout_id"], ["workouts.workout_id"], ondelete="CASCADE"
+            ["workout_id", "exercise_id"],
+            ["workouts_exercises.workout_id", "workouts_exercises.exercise_id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("set_id"),
         sa.UniqueConstraint(

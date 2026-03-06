@@ -77,3 +77,14 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ReorderMixin, ShiftIndicesM
         await self._session.execute(
             delete(RoutineExercise).where(RoutineExercise.exercise_id == exercise_id)
         )
+
+    async def count_by_routine(self, routine_id: int) -> int:
+        result = (
+            await self._session.execute(
+                select(func.count())
+                .select_from(RoutineExercise)
+                .where(RoutineExercise.routine_id == routine_id)
+            )
+        ).scalar()
+
+        return 0 if result is None else result

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, String, Float, ForeignKey, UniqueConstraint
+from sqlalchemy import Integer, String, Numeric, UniqueConstraint, ForeignKeyConstraint
 from typing import Optional
+from decimal import Decimal
 
 from app.db import Base
 
@@ -9,24 +10,21 @@ class WorkoutSet(Base):
     __tablename__ = "workouts_sets"
 
     set_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    workout_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("workouts.workout_id", ondelete="CASCADE"), nullable=False
+    workout_id: Mapped[int] = mapped_column(Integer)
+    exercise_id: Mapped[int] = mapped_column(Integer)
+    set_index: Mapped[int] = mapped_column(Integer)
+    weight: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(precision=6, scale=3), default=None
     )
-    exercise_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("exercises.exercise_id"),
-        nullable=False,
-    )
-    set_index: Mapped[int] = mapped_column(Integer, nullable=False)
-    weight: Mapped[Optional[float]] = mapped_column(
-        Float(precision=3), nullable=True, default=None
-    )
-    reps: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=None)
-    notes: Mapped[Optional[str]] = mapped_column(
-        String(128), nullable=True, default=None
-    )
+    reps: Mapped[Optional[int]] = mapped_column(Integer, default=None)
+    notes: Mapped[Optional[str]] = mapped_column(String(128), default=None)
 
     __table_args__ = (
+        ForeignKeyConstraint(
+            ["workout_id", "exercise_id"],
+            ["workouts_exercises.workout_id", "workouts_exercises.exercise_id"],
+            ondelete="CASCADE",
+        ),
         UniqueConstraint(
             "workout_id",
             "exercise_id",

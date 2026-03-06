@@ -28,7 +28,7 @@ class RoutineExercisePolicy:
         routine_id: int,
         exercise_id: int,
     ) -> tuple[Exercise, Routine]:
-        routine = await RoutinePolicy.assert_exist(
+        routine = await RoutinePolicy.assert_exists(
             repo=routines_repo, user_id=user_id, routine_id=routine_id
         )
 
@@ -46,7 +46,7 @@ class RoutineExercisePolicy:
         routine_id: int,
         exercise_id: int,
     ) -> tuple[Routine, RoutineExercise]:
-        routine = await RoutinePolicy.assert_exist(
+        routine = await RoutinePolicy.assert_exists(
             repo=routines_repo, user_id=user_id, routine_id=routine_id
         )
 
@@ -75,3 +75,10 @@ class RoutineExercisePolicy:
             raise BadRequestError(
                 "Submitted exercises must match exactly the exercises in the routine"
             )
+
+    @staticmethod
+    async def assert_has_exercises(repo: RoutineExerciseRepo, routine_id: int) -> None:
+        count = await repo.count_by_routine(routine_id)
+
+        if count == 0:
+            raise BadRequestError(f"Routine with id: {routine_id} has no exercises")

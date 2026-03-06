@@ -1,5 +1,11 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, ForeignKey, String, UniqueConstraint
+from sqlalchemy import (
+    Integer,
+    ForeignKey,
+    String,
+    UniqueConstraint,
+    PrimaryKeyConstraint,
+)
 from typing import Optional
 
 from app.db import Base
@@ -11,16 +17,14 @@ class RoutineExercise(Base):
     PARENT_ID = "routine_id"
 
     exercise_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("exercises.exercise_id"),
-        primary_key=True,
+        Integer, ForeignKey("exercises.exercise_id", ondelete="CASCADE")
     )
     routine_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("routines.routine_id", ondelete="CASCADE"), primary_key=True
+        Integer, ForeignKey("routines.routine_id", ondelete="CASCADE")
     )
-    exercise_index: Mapped[int] = mapped_column(Integer, nullable=False)
-    planned_sets: Mapped[int] = mapped_column(Integer, nullable=False)
-    exercise_notes: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    exercise_index: Mapped[int] = mapped_column(Integer)
+    planned_sets: Mapped[int] = mapped_column(Integer)
+    exercise_notes: Mapped[Optional[str]] = mapped_column(String(128), default=None)
 
     __table_args__ = (
         UniqueConstraint(
@@ -30,6 +34,7 @@ class RoutineExercise(Base):
             deferrable=True,
             initially="IMMEDIATE",
         ),
+        PrimaryKeyConstraint("exercise_id", "routine_id"),
     )
 
     @classmethod

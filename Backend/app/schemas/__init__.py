@@ -5,4 +5,5 @@ from .routines_exercises import (
     RoutineUpdateExercise,
     RoutineExerciseResponse,
 )
+from .workouts import WorkoutCreate, WorkoutNested, WorkoutResponse
 from .shared import ExerciseReorder

@@ -8,7 +8,7 @@ from app.models import Routine
 
 class RoutinePolicy:
     @staticmethod
-    async def assert_exist(
+    async def assert_exists(
         repo: RoutineRepo, user_id: uuid.UUID, routine_id: int
     ) -> Routine:
         routine = await repo.get_by_id(routine_id, user_id)

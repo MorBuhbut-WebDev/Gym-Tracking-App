@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, ForeignKey, UniqueConstraint
+from sqlalchemy import Integer, ForeignKey, UniqueConstraint, PrimaryKeyConstraint
 
 from app.db import Base
 
@@ -10,14 +10,12 @@ class WorkoutExercise(Base):
     PARENT_ID = "workout_id"
 
     workout_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("workouts.workout_id", ondelete="CASCADE"), primary_key=True
+        Integer, ForeignKey("workouts.workout_id", ondelete="CASCADE")
     )
     exercise_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("exercises.exercise_id"),
-        primary_key=True,
+        Integer, ForeignKey("exercises.exercise_id", ondelete="RESTRICT")
     )
-    exercise_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    exercise_index: Mapped[int] = mapped_column(Integer)
 
     __table_args__ = (
         UniqueConstraint(
@@ -27,4 +25,5 @@ class WorkoutExercise(Base):
             deferrable=True,
             initially="IMMEDIATE",
         ),
+        PrimaryKeyConstraint("workout_id", "exercise_id"),
     )
