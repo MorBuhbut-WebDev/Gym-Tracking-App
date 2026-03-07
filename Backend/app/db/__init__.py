@@ -1,1 +1,1 @@
-from .session import AsyncSessionLocal, Base
+from .session import AsyncSessionLocal, Base  # noqa: F401

@@ -1,7 +1,7 @@
-from .exercises import Exercise
-from .routines import Routine
-from .routines_exercises import RoutineExercise
-from .users import User
-from .workouts import Workout
-from .workouts_exercises import WorkoutExercise
-from .workouts_sets import WorkoutSet
+from .exercises import Exercise  # noqa: F401
+from .routines import Routine  # noqa: F401
+from .routines_exercises import RoutineExercise  # noqa: F401
+from .users import User  # noqa: F401
+from .workouts import Workout  # noqa: F401
+from .workouts_exercises import WorkoutExercise  # noqa: F401
+from .workouts_sets import WorkoutSet  # noqa: F401
