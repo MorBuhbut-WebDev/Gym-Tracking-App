@@ -1,2 +1,20 @@
-\.venv
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
 .env
+*.egg-info/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Misc
+*.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
