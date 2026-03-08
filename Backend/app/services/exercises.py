@@ -64,3 +64,12 @@ class ExerciseService:
             await uow.flush()
 
         return ExerciseResponse.model_validate(exercise)
+
+    async def delete(self, uow: UnitOfWork, user: User, exercise_id: int) -> None:
+        exercise = await ExercisePolicy.assert_exists(
+            repo=uow.exercises_repo,
+            user_id=user.user_id,
+            exercise_id=exercise_id,
+        )
+
+        uow.exercises_repo.soft_delete(exercise)
