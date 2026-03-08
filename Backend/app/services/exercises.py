@@ -73,3 +73,7 @@ class ExerciseService:
         )
 
         uow.exercises_repo.soft_delete(exercise)
+
+
+def get_exercises_service() -> ExerciseService:
+    return ExerciseService()
