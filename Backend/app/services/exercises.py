@@ -2,7 +2,7 @@ from app.auth import User
 from app.db import UnitOfWork, catch_unique_violation
 from app.models import Exercise
 from app.policies import ExercisePolicy
-from app.schemas import ExerciseCreate, ExerciseResponse
+from app.schemas import ExerciseCreate, ExerciseResponse, ExerciseUpdate
 
 
 class ExerciseService:
@@ -36,4 +36,31 @@ class ExerciseService:
             user_id=user.user_id,
             exercise_id=exercise_id,
         )
+        return ExerciseResponse.model_validate(exercise)
+
+    async def update(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        exercise_id: int,
+        payload: ExerciseUpdate,
+    ) -> ExerciseResponse:
+        exercise = await ExercisePolicy.assert_exists(
+            repo=uow.exercises_repo,
+            user_id=user.user_id,
+            exercise_id=exercise_id,
+        )
+
+        await ExercisePolicy.assert_name_is_unique(
+            repo=uow.exercises_repo,
+            user_id=user.user_id,
+            exercise_name=payload.exercise_name,
+            exercise_id=exercise_id,
+        )
+
+        exercise = uow.exercises_repo.update(old=exercise, updated=payload)
+
+        async with catch_unique_violation(f"{payload.exercise_name} already exists"):
+            await uow.flush()
+
         return ExerciseResponse.model_validate(exercise)
