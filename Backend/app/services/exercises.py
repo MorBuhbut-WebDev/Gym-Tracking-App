@@ -23,3 +23,7 @@ class ExerciseService:
             await uow.flush()
 
         return ExerciseResponse.model_validate(exercise)
+
+    async def get_all(self, uow: UnitOfWork, user: User) -> list[ExerciseResponse]:
+        exercises = await uow.exercises_repo.get_all(user.user_id)
+        return [ExerciseResponse.model_validate(exercise) for exercise in exercises]
