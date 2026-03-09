@@ -5,3 +5,4 @@ from .routines_exercises import (
     RoutineUpdateExercise,  # noqa: F401
     RoutineExerciseResponse,  # noqa: F401
 )
+from .shared import ExerciseReorder
