@@ -73,3 +73,7 @@ class RoutineService:
         )
 
         await uow.routines_repo.delete(routine)
+
+
+def get_routines_service() -> RoutineService:
+    return RoutineService()
