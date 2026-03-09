@@ -64,3 +64,12 @@ class RoutineService:
             await uow.flush()
 
         return RoutineResponse.model_validate(routine)
+
+    async def delete(self, uow: UnitOfWork, user: User, routine_id: int) -> None:
+        routine = await RoutinePolicy.assert_exists(
+            repo=uow.routines_repo,
+            user_id=user.user_id,
+            routine_id=routine_id,
+        )
+
+        await uow.routines_repo.delete(routine)
