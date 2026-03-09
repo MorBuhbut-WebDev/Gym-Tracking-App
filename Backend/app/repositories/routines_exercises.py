@@ -49,3 +49,10 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise]):
         )
 
         return routine_exercise
+
+    async def get_all(self, routine_id: int) -> list[RoutineExercise]:
+        exercises = await super().get_all(
+            condition=(RoutineExercise.routine_id == routine_id)
+        )
+
+        return exercises
