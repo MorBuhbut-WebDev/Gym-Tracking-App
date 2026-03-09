@@ -163,6 +163,23 @@ class RoutineService:
 
         return RoutineExerciseResponse.model_validate(routine_exercise)
 
+    async def delete_exercise(
+        self, uow: UnitOfWork, user: User, routine_id: int, exercise_id: int
+    ) -> None:
+        _, routine_exercise = await RoutineExercisePolicy.assert_link_exists(
+            routines_repo=uow.routines_repo,
+            routines_exercises_repo=uow.routines_exercises_repo,
+            user_id=user.user_id,
+            routine_id=routine_id,
+            exercise_id=exercise_id,
+        )
+
+        await uow.routines_exercises_repo.delete(routine_exercise)
+        await uow.flush()
+        await uow.routines_exercises_repo.shift_indices_after_delete(
+            [routine_id], [routine_exercise.exercise_index]
+        )
+
 
 def get_routines_service() -> RoutineService:
     return RoutineService()
