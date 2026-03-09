@@ -1,11 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 from typing import Optional
+from dataclasses import dataclass
 
 from app.repositories.base_repo import BaseRepo
 from app.models import RoutineExercise
-from app.schemas import RoutineAddExercise
+from app.schemas import RoutineAddExercise, ExerciseReorder
 from app.repositories.mixins import ShiftIndicesMixin, ReorderMixin
+
+
+@dataclass
+class RoutineExerciseRow:
+    exercise_id: int
+    routine_id: int
+    exercise_index: int
+    planned_sets: int
+    exercise_notes: Optional[str]
 
 
 class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderMixin):
@@ -57,3 +67,9 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderM
         )
 
         return exercises
+
+    async def reorder_exercises(
+        self, parent_id: int, payload: ExerciseReorder
+    ) -> list[RoutineExerciseRow]:
+        exercises = await super().reorder_exercises(parent_id, payload)
+        return [RoutineExerciseRow(**exercise) for exercise in exercises]
