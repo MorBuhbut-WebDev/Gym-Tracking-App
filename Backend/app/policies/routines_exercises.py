@@ -74,3 +74,10 @@ class RoutineExercisePolicy:
             raise BadRequestException(
                 "Submitted exercises must match exactly the exercises in the routine"
             )
+
+    @staticmethod
+    async def assert_has_exercises(repo: RoutineExerciseRepo, routine_id: int) -> None:
+        count = await repo.count_by_routine(routine_id)
+
+        if count == 0:
+            raise BadRequestException(f"Routine with id: {routine_id} has no exercises")
