@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Exercise
-from app.repositories.base_repo import BaseRepo
+from app.repositories.base import BaseRepo
 
 
 class ExerciseRepo(BaseRepo[Exercise]):

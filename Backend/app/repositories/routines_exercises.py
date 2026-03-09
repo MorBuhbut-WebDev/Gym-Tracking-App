@@ -3,7 +3,7 @@ from sqlalchemy import func, select
 from typing import Optional
 from dataclasses import dataclass
 
-from app.repositories.base_repo import BaseRepo
+from app.repositories.base import BaseRepo
 from app.models import RoutineExercise
 from app.schemas import RoutineAddExercise, ExerciseReorder
 from app.repositories.mixins import ShiftIndicesMixin, ReorderMixin

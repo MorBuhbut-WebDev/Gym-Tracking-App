@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
-from app.repositories.base_repo import BaseRepo
+from app.repositories.base import BaseRepo
 from app.models import Routine
 
 
