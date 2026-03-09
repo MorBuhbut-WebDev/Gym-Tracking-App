@@ -5,10 +5,10 @@ from typing import Optional
 from app.repositories.base_repo import BaseRepo
 from app.models import RoutineExercise
 from app.schemas import RoutineAddExercise
-from app.repositories.mixins import ShiftIndicesMixin
+from app.repositories.mixins import ShiftIndicesMixin, ReorderMixin
 
 
-class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin):
+class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderMixin):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(model=RoutineExercise, session=session)
 
