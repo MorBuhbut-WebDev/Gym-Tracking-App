@@ -1,6 +1,6 @@
 import uuid
-from app.exceptions import ConflictException
-from app.models import Exercise, Routine
+from app.exceptions import ConflictException, NotFoundException
+from app.models import Exercise, Routine, RoutineExercise
 from app.policies.exercises import ExercisePolicy
 from app.policies.routines import RoutinePolicy
 from app.repositories import ExerciseRepo, RoutineRepo, RoutineExerciseRepo
@@ -35,3 +35,26 @@ class RoutineExercisePolicy:
         )
 
         return routine, exercise
+
+    @staticmethod
+    async def assert_link_exists(
+        routines_repo: RoutineRepo,
+        routines_exercises_repo: RoutineExerciseRepo,
+        user_id: uuid.UUID,
+        routine_id: int,
+        exercise_id: int,
+    ) -> tuple[Routine, RoutineExercise]:
+        routine = await RoutinePolicy.assert_exists(
+            repo=routines_repo, user_id=user_id, routine_id=routine_id
+        )
+
+        routine_exercise = await routines_exercises_repo.get_link(
+            routine_id, exercise_id
+        )
+
+        if routine_exercise is None:
+            raise NotFoundException(
+                f"Exercise with id {exercise_id} doesn't exist in routine with id {routine_id}"
+            )
+
+        return routine, routine_exercise
