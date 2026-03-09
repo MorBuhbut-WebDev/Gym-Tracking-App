@@ -23,3 +23,7 @@ class RoutineService:
             await uow.flush()
 
         return RoutineResponse.model_validate(routine)
+
+    async def get_all(self, uow: UnitOfWork, user: User) -> list[RoutineResponse]:
+        routines = await uow.routines_repo.get_all(user.user_id)
+        return [RoutineResponse.model_validate(routine) for routine in routines]
