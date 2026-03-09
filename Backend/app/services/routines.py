@@ -112,6 +112,21 @@ class RoutineService:
 
         return RoutineExerciseResponse.model_validate(routine_exercise)
 
+    async def get_all_exercises(
+        self, uow: UnitOfWork, user: User, routine_id: int
+    ) -> list[RoutineExerciseResponse]:
+        await RoutinePolicy.assert_exists(
+            repo=uow.routines_repo,
+            user_id=user.user_id,
+            routine_id=routine_id,
+        )
+
+        exercises = await uow.routines_exercises_repo.get_all(routine_id)
+
+        return [
+            RoutineExerciseResponse.model_validate(exercise) for exercise in exercises
+        ]
+
 
 def get_routines_service() -> RoutineService:
     return RoutineService()
