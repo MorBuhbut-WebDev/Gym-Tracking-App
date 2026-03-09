@@ -27,3 +27,13 @@ class RoutineService:
     async def get_all(self, uow: UnitOfWork, user: User) -> list[RoutineResponse]:
         routines = await uow.routines_repo.get_all(user.user_id)
         return [RoutineResponse.model_validate(routine) for routine in routines]
+
+    async def get(
+        self, uow: UnitOfWork, user: User, routine_id: int
+    ) -> RoutineResponse:
+        routine = await RoutinePolicy.assert_exists(
+            repo=uow.routines_repo,
+            user_id=user.user_id,
+            routine_id=routine_id,
+        )
+        return RoutineResponse.model_validate(routine)
