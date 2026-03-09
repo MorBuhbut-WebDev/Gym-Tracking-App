@@ -1,10 +1,10 @@
 from sqlalchemy import ForeignKey, Integer, PrimaryKeyConstraint, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db import Base
+from app.models.base import HasParentID
 
 
-class WorkoutExercise(Base):
+class WorkoutExercise(HasParentID):
     __tablename__ = "workouts_exercises"
     EXERCISE_INDEX_CONSTRAINT = "uq_workout_exercise_order"
     PARENT_ID = "workout_id"

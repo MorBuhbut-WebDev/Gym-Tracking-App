@@ -9,10 +9,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db import Base
+from app.models.base import HasParentID
 
 
-class RoutineExercise(Base):
+class RoutineExercise(HasParentID):
     __tablename__ = "routines_exercises"
     EXERCISE_INDEX_CONSTRAINT = "uq_routine_exercise_order"
     PARENT_ID = "routine_id"

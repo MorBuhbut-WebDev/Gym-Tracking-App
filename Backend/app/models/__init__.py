@@ -5,3 +5,4 @@ from .users import User  # noqa: F401
 from .workouts import Workout  # noqa: F401
 from .workouts_exercises import WorkoutExercise  # noqa: F401
 from .workouts_sets import WorkoutSet  # noqa: F401
+from .base import HasParentID  # noqa: F401
