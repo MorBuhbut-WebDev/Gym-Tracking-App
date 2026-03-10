@@ -1,6 +1,5 @@
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy import ForeignKey, Integer, String, func
 from sqlalchemy.dialects.postgresql import TIMESTAMP, UUID
@@ -13,7 +12,7 @@ class Workout(Base):
     __tablename__ = "workouts"
 
     workout_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    routine_id: Mapped[Optional[int]] = mapped_column(
+    routine_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("routines.routine_id", ondelete="SET NULL")
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -22,10 +21,10 @@ class Workout(Base):
     )
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
-        default=lambda: datetime.now(tz=timezone.utc),
+        default=lambda: datetime.now(tz=UTC),
         server_default=func.now(),
     )
-    ended_at: Mapped[Optional[datetime]] = mapped_column(
+    ended_at: Mapped[datetime | None] = mapped_column(
         TIMESTAMP(timezone=True), default=None
     )
     workout_name: Mapped[str] = mapped_column(String(36))

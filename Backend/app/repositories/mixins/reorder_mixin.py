@@ -1,9 +1,9 @@
 from typing import cast
 
-from sqlalchemy import text, RowMapping
-from app.schemas import ExerciseReorder
+from sqlalchemy import RowMapping, text
 
 from app.repositories.mixins.base import HasSessionAndModel
+from app.schemas import ExerciseReorder
 
 
 class ReorderMixin(HasSessionAndModel):

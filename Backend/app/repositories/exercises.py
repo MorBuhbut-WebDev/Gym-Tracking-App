@@ -1,6 +1,5 @@
 import uuid
 from datetime import date
-from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,8 +22,8 @@ class ExerciseRepo(BaseRepo[Exercise]):
         return exercises
 
     async def get_by_name(
-        self, exercise_name: str, exercise_id: Optional[int], user_id: uuid.UUID
-    ) -> Optional[Exercise]:
+        self, exercise_name: str, exercise_id: int | None, user_id: uuid.UUID
+    ) -> Exercise | None:
         condition = (
             (Exercise.user_id == user_id)
             & (Exercise.exercise_name == exercise_name)
@@ -36,9 +35,7 @@ class ExerciseRepo(BaseRepo[Exercise]):
 
         return await self.get(condition)
 
-    async def get_by_id(
-        self, exercise_id: int, user_id: uuid.UUID
-    ) -> Optional[Exercise]:
+    async def get_by_id(self, exercise_id: int, user_id: uuid.UUID) -> Exercise | None:
         return await self.get(
             condition=(
                 (Exercise.user_id == user_id)

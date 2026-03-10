@@ -43,8 +43,8 @@ class Cache:
         try:
             await self._ensure_kid(kid)
             return jwk.construct(self._jwks_cache[kid])
-        except KeyError:
-            raise ValueError("missing kid")
+        except KeyError as e:
+            raise ValueError("missing kid") from e
 
 
 jwks_cache = Cache()

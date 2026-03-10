@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories import (
     ExerciseRepo,
-    RoutineRepo,
     RoutineExerciseRepo,
-    WorkoutRepo,
+    RoutineRepo,
     WorkoutExerciseRepo,
+    WorkoutRepo,
     WorkoutSetRepo,
 )
 

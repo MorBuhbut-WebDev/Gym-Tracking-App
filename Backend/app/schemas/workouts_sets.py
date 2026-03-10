@@ -1,14 +1,14 @@
-from pydantic import BaseModel
 from decimal import Decimal
-from typing import Optional
+
+from pydantic import BaseModel
 
 
 class WorkoutSetBase(BaseModel):
     set_id: int
     set_index: int
-    weight: Optional[Decimal]
-    reps: Optional[int]
-    notes: Optional[str]
+    weight: Decimal | None
+    reps: int | None
+    notes: str | None
 
 
 class WorkoutSetNested(WorkoutSetBase):

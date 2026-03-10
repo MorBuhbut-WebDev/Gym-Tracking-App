@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -19,19 +19,19 @@ async def get_user(
     try:
         user = await verify_access_token(token)
         return user
-    except ExpiredSignatureError:
-        raise UnauthorizedException("Session expired")
-    except (JWTError, ValueError):
-        raise UnauthorizedException("Invalid token")
+    except ExpiredSignatureError as e:
+        raise UnauthorizedException("Session expired") from e
+    except (JWTError, ValueError) as e:
+        raise UnauthorizedException("Invalid token") from e
 
 
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncGenerator[AsyncSession]:
     async with AsyncSessionLocal() as async_session:
         yield async_session
 
 
 async def get_uow(
     session: AsyncSession = Depends(get_db),
-) -> AsyncGenerator[UnitOfWork, None]:
+) -> AsyncGenerator[UnitOfWork]:
     async with UnitOfWork(session) as uow:
         yield uow

@@ -1,5 +1,4 @@
 from decimal import Decimal
-from typing import Optional
 
 from sqlalchemy import ForeignKeyConstraint, Integer, Numeric, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
@@ -14,11 +13,11 @@ class WorkoutSet(Base):
     workout_id: Mapped[int] = mapped_column(Integer)
     exercise_id: Mapped[int] = mapped_column(Integer)
     set_index: Mapped[int] = mapped_column(Integer)
-    weight: Mapped[Optional[Decimal]] = mapped_column(
+    weight: Mapped[Decimal | None] = mapped_column(
         Numeric(precision=6, scale=3), default=None
     )
-    reps: Mapped[Optional[int]] = mapped_column(Integer, default=None)
-    notes: Mapped[Optional[str]] = mapped_column(String(128), default=None)
+    reps: Mapped[int | None] = mapped_column(Integer, default=None)
+    notes: Mapped[str | None] = mapped_column(String(128), default=None)
 
     __table_args__ = (
         ForeignKeyConstraint(

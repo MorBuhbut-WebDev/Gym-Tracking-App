@@ -1,5 +1,6 @@
-from pydantic import BaseModel, model_validator, PositiveInt
 from typing import Self
+
+from pydantic import BaseModel, PositiveInt, model_validator
 
 
 class ExerciseOrderItem(BaseModel):
@@ -29,7 +30,7 @@ class ExerciseReorder(BaseModel):
         if exercise_positions[0] != 1:
             raise ValueError("Positions must start from index 1")
 
-        for curr, nxt in zip(exercise_positions, exercise_positions[1:]):
+        for curr, nxt in zip(exercise_positions, exercise_positions[1:], strict=False):
             if nxt - curr != 1:
                 raise ValueError("Exercises positions must be contiguous sequence")
 

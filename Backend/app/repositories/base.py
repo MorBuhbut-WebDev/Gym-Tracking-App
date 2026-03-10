@@ -1,4 +1,4 @@
-from typing import Generic, Optional, Type, TypeVar, cast
+from typing import Generic, TypeVar, cast
 
 from pydantic import BaseModel
 from sqlalchemy import ColumnElement, select
@@ -10,7 +10,7 @@ Model = TypeVar("Model", bound=Base)
 
 
 class BaseRepo(Generic[Model]):
-    def __init__(self, model: Type[Model], session: AsyncSession) -> None:
+    def __init__(self, model: type[Model], session: AsyncSession) -> None:
         self._model = model
         self._session = session
 
@@ -26,7 +26,7 @@ class BaseRepo(Generic[Model]):
         result = await self._execute_query(condition)
         return cast(list[Model], result.scalars().all())
 
-    async def get(self, condition: ColumnElement[bool]) -> Optional[Model]:
+    async def get(self, condition: ColumnElement[bool]) -> Model | None:
         result = await self._execute_query(condition)
         return result.scalar_one_or_none()
 

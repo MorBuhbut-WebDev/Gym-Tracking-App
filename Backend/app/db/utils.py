@@ -11,5 +11,5 @@ async def catch_unique_violation(msg: str):
         yield
     except IntegrityError as e:
         if e.orig.pgcode == "23505":  # type: ignore
-            raise ConflictException(msg)
+            raise ConflictException(msg) from e
         raise

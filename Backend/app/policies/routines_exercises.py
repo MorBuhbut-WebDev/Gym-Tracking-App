@@ -1,9 +1,10 @@
 import uuid
-from app.exceptions import ConflictException, NotFoundException, BadRequestException
+
+from app.exceptions import BadRequestException, ConflictException, NotFoundException
 from app.models import Exercise, Routine, RoutineExercise
 from app.policies.exercises import ExercisePolicy
 from app.policies.routines import RoutinePolicy
-from app.repositories import ExerciseRepo, RoutineRepo, RoutineExerciseRepo
+from app.repositories import ExerciseRepo, RoutineExerciseRepo, RoutineRepo
 from app.schemas import ExerciseReorder
 
 

@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional, TypedDict, cast
+from typing import TypedDict, cast
 
 from jose import jwt
 
@@ -13,7 +13,7 @@ class JWTPayload(TypedDict):
 
 
 async def verify_access_token(token: str) -> User:
-    kid = cast(Optional[str], jwt.get_unverified_header(token).get("kid", None))
+    kid = cast(str | None, jwt.get_unverified_header(token).get("kid", None))
 
     if kid is None:
         raise ValueError("missing kid")

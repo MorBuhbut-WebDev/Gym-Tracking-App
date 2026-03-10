@@ -1,17 +1,18 @@
-from pydantic import BaseModel, model_validator, PositiveInt
-from typing import Optional, Self
+from typing import Self
+
+from pydantic import BaseModel, PositiveInt, model_validator
 
 from app.schemas.types import NotEmptyString
 
 
 class RoutineAddExercise(BaseModel):
     planned_sets: PositiveInt = 3
-    exercise_notes: Optional[NotEmptyString] = None
+    exercise_notes: NotEmptyString | None = None
 
 
 class RoutineUpdateExercise(BaseModel):
-    planned_sets: Optional[PositiveInt] = None
-    exercise_notes: Optional[NotEmptyString] = None
+    planned_sets: PositiveInt | None = None
+    exercise_notes: NotEmptyString | None = None
 
     @model_validator(mode="after")
     def ensure_at_least_one_exist(self) -> Self:
@@ -25,6 +26,6 @@ class RoutineExerciseResponse(BaseModel):
     routine_id: int
     exercise_index: int
     planned_sets: int
-    exercise_notes: Optional[str]
+    exercise_notes: str | None
 
     model_config = {"from_attributes": True}

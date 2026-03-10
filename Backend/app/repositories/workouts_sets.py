@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories.base import BaseRepo
 from app.models import WorkoutSet
+from app.repositories.base import BaseRepo
 
 
 class WorkoutSetRepo(BaseRepo[WorkoutSet]):
@@ -20,7 +20,7 @@ class WorkoutSetRepo(BaseRepo[WorkoutSet]):
                 gs.set_index
             FROM routines_exercises re
             CROSS JOIN generate_series(1, re.planned_sets) gs(set_index)
-            WHERE re.routine_id = :routine_id    
+            WHERE re.routine_id = :routine_id
             """
             ),
             {"workout_id": workout_id, "routine_id": routine_id},

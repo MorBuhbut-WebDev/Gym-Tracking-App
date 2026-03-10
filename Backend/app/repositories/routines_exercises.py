@@ -1,12 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select
-from typing import Optional
 from dataclasses import dataclass
 
-from app.repositories.base import BaseRepo
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models import RoutineExercise
-from app.schemas import RoutineAddExercise, ExerciseReorder
-from app.repositories.mixins import ShiftIndicesMixin, ReorderMixin
+from app.repositories.base import BaseRepo
+from app.repositories.mixins import ReorderMixin, ShiftIndicesMixin
+from app.schemas import ExerciseReorder, RoutineAddExercise
 
 
 @dataclass
@@ -15,7 +15,7 @@ class RoutineExerciseRow:
     routine_id: int
     exercise_index: int
     planned_sets: int
-    exercise_notes: Optional[str]
+    exercise_notes: str | None
 
 
 class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderMixin):
@@ -53,7 +53,7 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderM
         self,
         routine_id: int,
         exercise_id: int,
-    ) -> Optional[RoutineExercise]:
+    ) -> RoutineExercise | None:
         routine_exercise = await self.get(
             condition=(RoutineExercise.routine_id == routine_id)
             & (RoutineExercise.exercise_id == exercise_id),

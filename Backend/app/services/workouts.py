@@ -1,8 +1,8 @@
-from app.db import UnitOfWork
 from app.auth import User
-from app.schemas import WorkoutCreate, WorkoutNested
+from app.db import UnitOfWork
 from app.models import Workout
-from app.policies import RoutinePolicy, RoutineExercisePolicy
+from app.policies import RoutineExercisePolicy, RoutinePolicy
+from app.schemas import WorkoutCreate, WorkoutNested
 
 
 class WorkoutService:

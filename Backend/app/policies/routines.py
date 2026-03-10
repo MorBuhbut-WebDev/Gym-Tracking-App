@@ -1,9 +1,8 @@
 import uuid
-from typing import Optional
 
-from app.repositories import RoutineRepo
-from app.exceptions import NotFoundException, ConflictException
+from app.exceptions import ConflictException, NotFoundException
 from app.models import Routine
+from app.repositories import RoutineRepo
 
 
 class RoutinePolicy:
@@ -23,7 +22,7 @@ class RoutinePolicy:
         repo: RoutineRepo,
         user_id: uuid.UUID,
         routine_name: str,
-        routine_id: Optional[int] = None,
+        routine_id: int | None = None,
     ) -> None:
         routine = await repo.get_by_name(routine_name, routine_id, user_id)
 

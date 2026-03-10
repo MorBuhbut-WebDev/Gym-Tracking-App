@@ -1,6 +1,7 @@
-from pydantic import BaseModel, PositiveInt, Field, model_validator
-from typing import Optional, Self
-from datetime import datetime, timedelta, date, timezone
+from datetime import UTC, date, datetime, timedelta
+from typing import Self
+
+from pydantic import BaseModel, Field, PositiveInt, model_validator
 
 from app.schemas.workouts_exercises import WorkoutExerciseNested
 
@@ -11,7 +12,7 @@ class WorkoutCreate(BaseModel):
 
 class WorkoutFilters(BaseModel):
     start_date: date = Field(default_factory=lambda: date.today().replace(day=1))
-    end_date: Optional[date] = Field(default=None)
+    end_date: date | None = Field(default=None)
 
     @model_validator(mode="after")
     def set_end_date_and_convert(self) -> Self:
@@ -32,22 +33,22 @@ class WorkoutFilters(BaseModel):
             self.start_date.year,
             self.start_date.month,
             self.start_date.day,
-            tzinfo=timezone.utc,
+            tzinfo=UTC,
         )
         end = datetime(
             self.end_date.year,
             self.end_date.month,
             self.end_date.day,
-            tzinfo=timezone.utc,
+            tzinfo=UTC,
         )
         return start, end
 
 
 class WorkoutBase(BaseModel):
     workout_id: int
-    routine_id: Optional[int]
+    routine_id: int | None
     created_at: datetime
-    ended_at: Optional[datetime]
+    ended_at: datetime | None
     workout_name: str
 
 

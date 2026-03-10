@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 
-from app.schemas import (
-    RoutineAddExercise,
-    RoutineUpdateExercise,
-    ExerciseReorder,
-    RoutineExerciseResponse,
-)
-from app.dependencies import get_user, get_uow
 from app.auth import User
 from app.db import UnitOfWork
+from app.dependencies import get_uow, get_user
+from app.schemas import (
+    ExerciseReorder,
+    RoutineAddExercise,
+    RoutineExerciseResponse,
+    RoutineUpdateExercise,
+)
 from app.services import RoutineService, get_routines_service
 
 routine_exercise_router = APIRouter(prefix="/{routine_id}/exercises")

@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories.base import BaseRepo
 from app.models import WorkoutExercise
+from app.repositories.base import BaseRepo
 
 
 class WorkoutExerciseRepo(BaseRepo[WorkoutExercise]):
@@ -19,7 +19,7 @@ class WorkoutExerciseRepo(BaseRepo[WorkoutExercise]):
                 exercise_id,
                 exercise_index
             FROM routines_exercises
-            WHERE routine_id = :routine_id    
+            WHERE routine_id = :routine_id
             """
             ),
             {"workout_id": workout_id, "routine_id": routine_id},

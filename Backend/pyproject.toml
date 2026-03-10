@@ -1,0 +1,27 @@
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (unused imports, undefined vars)
+    "I",   # isort (import sorting)
+    "B",   # bugbear (common bugs and design issues)
+    "UP",  # pyupgrade (modernize old Python syntax)
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",
+    "UP046"
+]
+
+[tool.ruff.lint.isort]
+force-single-line = false        # keeps "from x import a, b" on one line
+known-first-party = ["app"]      # ← change "app" to your package name
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true     # formats code inside docstrings too

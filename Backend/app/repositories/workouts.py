@@ -1,14 +1,13 @@
 import uuid
-from typing import Optional
+from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
-from dataclasses import dataclass
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories.base import BaseRepo
 from app.models import Workout
+from app.repositories.base import BaseRepo
 
 
 @dataclass
@@ -16,15 +15,15 @@ class WorkoutDetailRow:
     workout_id: int
     routine_id: int
     created_at: datetime
-    ended_at: Optional[datetime]
+    ended_at: datetime | None
     workout_name: str
     exercise_id: int
     exercise_index: int
     set_id: int
     set_index: int
-    weight: Optional[Decimal]
-    reps: Optional[int]
-    notes: Optional[str]
+    weight: Decimal | None
+    reps: int | None
+    notes: str | None
 
 
 class WorkoutRepo(BaseRepo[Workout]):

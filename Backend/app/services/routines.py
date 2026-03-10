@@ -1,16 +1,16 @@
-from app.schemas import (
-    RoutineCreate,
-    RoutineUpdate,
-    RoutineResponse,
-    RoutineAddExercise,
-    RoutineUpdateExercise,
-    RoutineExerciseResponse,
-    ExerciseReorder,
-)
 from app.auth import User
 from app.db import UnitOfWork, catch_unique_violation
-from app.policies import RoutinePolicy, RoutineExercisePolicy
 from app.models import Routine
+from app.policies import RoutineExercisePolicy, RoutinePolicy
+from app.schemas import (
+    ExerciseReorder,
+    RoutineAddExercise,
+    RoutineCreate,
+    RoutineExerciseResponse,
+    RoutineResponse,
+    RoutineUpdate,
+    RoutineUpdateExercise,
+)
 
 
 class RoutineService:

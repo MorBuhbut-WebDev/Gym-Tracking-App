@@ -1,9 +1,9 @@
 import uuid
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
 
-from app.repositories.base import BaseRepo
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models import Routine
+from app.repositories.base import BaseRepo
 
 
 class RoutineRepo(BaseRepo[Routine]):
@@ -17,8 +17,8 @@ class RoutineRepo(BaseRepo[Routine]):
         return routines
 
     async def get_by_name(
-        self, routine_name: str, routine_id: Optional[int], user_id: uuid.UUID
-    ) -> Optional[Routine]:
+        self, routine_name: str, routine_id: int | None, user_id: uuid.UUID
+    ) -> Routine | None:
         condition = (Routine.user_id == user_id) & (
             Routine.routine_name == routine_name
         )
@@ -28,7 +28,7 @@ class RoutineRepo(BaseRepo[Routine]):
 
         return await self.get(condition)
 
-    async def get_by_id(self, routine_id: int, user_id: uuid.UUID) -> Optional[Routine]:
+    async def get_by_id(self, routine_id: int, user_id: uuid.UUID) -> Routine | None:
         return await self.get(
             condition=(
                 (Routine.user_id == user_id) & (Routine.routine_id == routine_id)

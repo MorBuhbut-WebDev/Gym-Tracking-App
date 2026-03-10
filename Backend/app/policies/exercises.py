@@ -1,5 +1,4 @@
 import uuid
-from typing import Optional
 
 from app.exceptions import ConflictException, NotFoundException
 from app.models import Exercise
@@ -23,7 +22,7 @@ class ExercisePolicy:
         repo: ExerciseRepo,
         user_id: uuid.UUID,
         exercise_name: str,
-        exercise_id: Optional[int] = None,
+        exercise_id: int | None = None,
     ) -> None:
         exercise = await repo.get_by_name(exercise_name, exercise_id, user_id)
 

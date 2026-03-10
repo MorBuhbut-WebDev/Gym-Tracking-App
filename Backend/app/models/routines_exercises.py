@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy import (
     ForeignKey,
     Integer,
@@ -25,7 +23,7 @@ class RoutineExercise(HasParentID):
     )
     exercise_index: Mapped[int] = mapped_column(Integer)
     planned_sets: Mapped[int] = mapped_column(Integer)
-    exercise_notes: Mapped[Optional[str]] = mapped_column(String(128), default=None)
+    exercise_notes: Mapped[str | None] = mapped_column(String(128), default=None)
 
     __table_args__ = (
         UniqueConstraint(
@@ -46,7 +44,7 @@ class RoutineExercise(HasParentID):
         routine_id: int,
         exercise_index: int,
         planned_sets: int,
-        exercise_notes: Optional[str],
+        exercise_notes: str | None,
     ) -> "RoutineExercise":
         return cls(
             exercise_id=exercise_id,
