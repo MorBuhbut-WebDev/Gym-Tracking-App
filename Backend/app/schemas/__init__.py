@@ -5,4 +5,5 @@ from .routines_exercises import (
     RoutineUpdateExercise,  # noqa: F401
     RoutineExerciseResponse,  # noqa: F401
 )
-from .shared import ExerciseReorder
+from .workouts import WorkoutCreate, WorkoutNested  # noqa: F401
+from .shared import ExerciseReorder  # noqa: F401
