@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal
@@ -69,3 +70,12 @@ class WorkoutRepo(BaseRepo[Workout]):
         )
 
         return [WorkoutDetailRow(**row) for row in rows]
+
+    async def get_all_by_date_range(
+        self, user_id: uuid.UUID, start_date: datetime, end_date: datetime
+    ) -> list[Workout]:
+        return await self.get_all(
+            condition=(Workout.user_id == user_id)
+            & (Workout.created_at >= start_date)
+            & (Workout.created_at < end_date)
+        )
