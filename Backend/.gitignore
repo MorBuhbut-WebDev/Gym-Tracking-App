@@ -1,0 +1,18 @@
+# Python
+**/__pycache__/
+**/*.pyc
+
+# Environment
+.env
+
+# Virtual environment
+.venv/
+
+# Tools
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+
+# Windows
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,20 @@
+[project]
+name = "gym-tracking-app"
+version = "0.1.0"
+description = ""
+dependencies = [
+    "alembic",
+    "asyncpg",
+    "fastapi",
+    "httpx",
+    "psycopg2-binary",
+    "pydantic",
+    "pydantic-settings",
+    "python-jose",
+    "sqlalchemy[asyncio]",
+    "uvicorn[standard]"
+]
+requires-python = ">=3.13"
+
+[project.optional-dependencies]
+dev = ["ruff", "pip-tools"]
