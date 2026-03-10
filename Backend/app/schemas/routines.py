@@ -2,6 +2,7 @@ import uuid
 
 from pydantic import BaseModel
 
+from app.schemas.shared import AppBaseModel
 from app.schemas.types import Name
 
 
@@ -17,9 +18,7 @@ class RoutineUpdate(RoutineBase):
     pass
 
 
-class RoutineResponse(BaseModel):
+class RoutineResponse(AppBaseModel):
     routine_id: int
     user_id: uuid.UUID
     routine_name: str
-
-    model_config = {"from_attributes": True}

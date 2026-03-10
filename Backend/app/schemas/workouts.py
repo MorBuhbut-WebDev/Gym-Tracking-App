@@ -3,6 +3,7 @@ from typing import Self
 
 from pydantic import BaseModel, Field, PositiveInt, model_validator
 
+from app.schemas.shared import AppBaseModel
 from app.schemas.workouts_exercises import WorkoutExerciseNested
 
 
@@ -36,9 +37,9 @@ class WorkoutFilters(BaseModel):
             tzinfo=UTC,
         )
         end = datetime(
-            self.end_date.year,
-            self.end_date.month,
-            self.end_date.day,
+            self.end_date.year,  # type: ignore
+            self.end_date.month,  # type: ignore
+            self.end_date.day,  # type: ignore
             tzinfo=UTC,
         )
         return start, end
@@ -52,11 +53,9 @@ class WorkoutBase(BaseModel):
     workout_name: str
 
 
-class WorkoutResponse(WorkoutBase):
-    model_config = {"from_attributes": True}
+class WorkoutResponse(WorkoutBase, AppBaseModel):
+    pass
 
 
-class WorkoutNested(WorkoutBase):
+class WorkoutNested(WorkoutBase, AppBaseModel):
     exercises: list[WorkoutExerciseNested]
-
-    model_config = {"from_attributes": True}

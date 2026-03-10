@@ -2,6 +2,7 @@ from typing import Self
 
 from pydantic import BaseModel, PositiveInt, model_validator
 
+from app.schemas.shared import AppBaseModel
 from app.schemas.types import NotEmptyString
 
 
@@ -21,11 +22,9 @@ class RoutineUpdateExercise(BaseModel):
         return self
 
 
-class RoutineExerciseResponse(BaseModel):
+class RoutineExerciseResponse(AppBaseModel):
     exercise_id: int
     routine_id: int
     exercise_index: int
     planned_sets: int
     exercise_notes: str | None
-
-    model_config = {"from_attributes": True}

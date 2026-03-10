@@ -1,6 +1,10 @@
 from typing import Self
 
-from pydantic import BaseModel, PositiveInt, model_validator
+from pydantic import BaseModel, ConfigDict, PositiveInt, model_validator
+
+
+class AppBaseModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ExerciseOrderItem(BaseModel):

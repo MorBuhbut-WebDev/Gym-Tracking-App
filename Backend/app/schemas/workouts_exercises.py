@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from app.schemas.shared import AppBaseModel
 from app.schemas.workouts_sets import WorkoutSetNested
 
 
@@ -8,13 +9,9 @@ class WorkoutExerciseBase(BaseModel):
     exercise_index: int
 
 
-class WorkoutExerciseNested(WorkoutExerciseBase):
+class WorkoutExerciseNested(WorkoutExerciseBase, AppBaseModel):
     sets: list[WorkoutSetNested]
 
-    model_config = {"from_attributes": True}
 
-
-class WorkoutExerciseResponse(WorkoutExerciseBase):
+class WorkoutExerciseResponse(WorkoutExerciseBase, AppBaseModel):
     workout_id: int
-
-    model_config = {"from_attributes": True}
