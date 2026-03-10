@@ -5,6 +5,14 @@ from logging.config import fileConfig
 # and controls how migrations are discovered and executed
 from alembic import context
 
+# engine_from_config builds a SQLAlchemy engine from alembic.ini settings
+# pool and Table are used to configure connection pooling and reflect external tables
+from sqlalchemy import engine_from_config, pool
+
+# Importing models registers them into Base.metadata so Alembic can detect them
+# Without these imports, autogenerate would produce empty migrations
+from app import models  # noqa: F401
+
 # Importing models registers them into Base.metadata so Alembic can detect them
 # Without these imports, autogenerate would produce empty migrations
 # App settings provide the database URL so we don't hardcode credentials in alembic.ini
@@ -13,14 +21,6 @@ from app.config import settings
 # Base.metadata contains all SQLAlchemy model definitions (tables, constraints, indexes)
 # Alembic uses this to compare against the live DB and generate migrations
 from app.db import Base
-
-# Importing models registers them into Base.metadata so Alembic can detect them
-# Without these imports, autogenerate would produce empty migrations
-from app import models  # noqa: F401
-
-# engine_from_config builds a SQLAlchemy engine from alembic.ini settings
-# pool and Table are used to configure connection pooling and reflect external tables
-from sqlalchemy import engine_from_config, pool
 
 # Alembic's config object — provides access to alembic.ini values at runtime
 config = context.config
