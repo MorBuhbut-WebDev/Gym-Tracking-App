@@ -1,8 +1,14 @@
 from app.auth import User
 from app.db import UnitOfWork, catch_unique_violation
 from app.models import Routine
-from app.policies import RoutinePolicy
-from app.schemas import RoutineCreate, RoutineResponse, RoutineUpdate
+from app.policies import RoutineExercisePolicy, RoutinePolicy
+from app.schemas import (
+    RoutineAddExercise,
+    RoutineCreate,
+    RoutineExerciseResponse,
+    RoutineResponse,
+    RoutineUpdate,
+)
 
 
 class RoutineService:
@@ -73,6 +79,38 @@ class RoutineService:
         )
 
         await uow.routines_repo.delete(routine)
+
+    async def add_exercise(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        routine_id: int,
+        exercise_id: int,
+        payload: RoutineAddExercise,
+    ) -> RoutineExerciseResponse:
+        await RoutineExercisePolicy.assert_accessible(
+            exercises_repo=uow.exercises_repo,
+            routines_repo=uow.routines_repo,
+            user_id=user.user_id,
+            routine_id=routine_id,
+            exercise_id=exercise_id,
+        )
+
+        await RoutineExercisePolicy.assert_not_linked(
+            repo=uow.routines_exercises_repo,
+            routine_id=routine_id,
+            exercise_id=exercise_id,
+        )
+
+        routine_exercise = await uow.routines_exercises_repo.add_exercise(
+            routine_id,
+            exercise_id,
+            payload,
+        )
+
+        await uow.flush()
+
+        return RoutineExerciseResponse.model_validate(routine_exercise)
 
 
 def get_routines_service() -> RoutineService:
