@@ -1,7 +1,7 @@
 from typing import TypeVar, cast
 
 from pydantic import BaseModel
-from sqlalchemy import BinaryExpression, select
+from sqlalchemy import ColumnElement, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import Base
@@ -14,7 +14,7 @@ class BaseRepo[Model]:
         self._model = model
         self._session = session
 
-    async def _execute_query(self, condition: BinaryExpression):
+    async def _execute_query(self, condition: ColumnElement[bool]):
         query = select(self._model).where(condition)
         return await self._session.execute(query)
 
@@ -22,11 +22,11 @@ class BaseRepo[Model]:
         self._session.add(obj)
         return obj
 
-    async def get_all(self, condition: BinaryExpression) -> list[Model]:
+    async def get_all(self, condition: ColumnElement[bool]) -> list[Model]:
         result = await self._execute_query(condition)
         return cast(list[Model], result.scalars().all())
 
-    async def get(self, condition: BinaryExpression) -> Model | None:
+    async def get(self, condition: ColumnElement[bool]) -> Model | None:
         result = await self._execute_query(condition)
         return result.scalar_one_or_none()
 
