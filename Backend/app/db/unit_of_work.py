@@ -2,7 +2,7 @@ from typing import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories import ExerciseRepo, RoutineRepo
+from app.repositories import ExerciseRepo, RoutineExerciseRepo, RoutineRepo
 
 
 class UnitOfWork:
@@ -10,6 +10,7 @@ class UnitOfWork:
         self._session = session
         self._exercises_repo = None
         self._routines_repo = None
+        self._routines_exercises_repo = None
 
     @property
     def exercises_repo(self) -> ExerciseRepo:
@@ -23,6 +24,13 @@ class UnitOfWork:
         if self._routines_repo is None:
             self._routines_repo = RoutineRepo(self._session)
         return self._routines_repo
+
+    @property
+    def routines_exercises_repo(self) -> RoutineExerciseRepo:
+        if self._routines_exercises_repo is None:
+            self._routines_exercises_repo = RoutineExerciseRepo(self._session)
+
+        return self._routines_exercises_repo
 
     async def flush(self) -> None:
         await self._session.flush()
