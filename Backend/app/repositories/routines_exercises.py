@@ -1,0 +1,50 @@
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models import RoutineExercise
+from app.repositories.base import BaseRepo
+from app.schemas import RoutineAddExercise
+
+
+class RoutineExerciseRepo(BaseRepo[RoutineExercise]):
+    def __init__(self, session: AsyncSession) -> None:
+        super().__init__(model=RoutineExercise, session=session)
+
+    async def add_exercise(
+        self,
+        routine_id: int,
+        exercise_id: int,
+        exercise: RoutineAddExercise,
+    ) -> RoutineExercise:
+        result = (
+            await self._session.execute(
+                select(func.max(RoutineExercise.exercise_index)).where(
+                    RoutineExercise.routine_id == routine_id
+                )
+            )
+        ).scalar()
+
+        max_exercise_index = 1 if result is None else result + 1
+
+        routine_exercise = self.add(
+            RoutineExercise.create(
+                exercise_id=exercise_id,
+                routine_id=routine_id,
+                exercise_index=max_exercise_index,
+                planned_sets=exercise.planned_sets,
+                exercise_notes=exercise.exercise_notes,
+            ),
+        )
+        return routine_exercise
+
+    async def get_link(
+        self,
+        routine_id: int,
+        exercise_id: int,
+    ) -> RoutineExercise | None:
+        routine_exercise = await self.get(
+            condition=(RoutineExercise.routine_id == routine_id)
+            & (RoutineExercise.exercise_id == exercise_id),
+        )
+
+        return routine_exercise
