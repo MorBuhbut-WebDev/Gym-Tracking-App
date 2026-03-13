@@ -3,10 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RoutineExercise
 from app.repositories.base import BaseRepo
+from app.repositories.mixins import ShiftIndicesMixin
 from app.schemas import RoutineAddExercise
 
 
-class RoutineExerciseRepo(BaseRepo[RoutineExercise]):
+class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(model=RoutineExercise, session=session)
 
