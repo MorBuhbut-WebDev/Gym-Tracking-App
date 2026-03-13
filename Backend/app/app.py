@@ -3,8 +3,11 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 
 from app.exceptions import BaseExceptionApp
+from app.routes import exercises_router
 
 app = FastAPI()
+
+app.include_router(exercises_router)
 
 
 @app.exception_handler(BaseExceptionApp)
