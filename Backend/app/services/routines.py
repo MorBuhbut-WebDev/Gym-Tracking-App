@@ -2,7 +2,7 @@ from app.auth import User
 from app.db import UnitOfWork, catch_unique_violation
 from app.models import Routine
 from app.policies import RoutinePolicy
-from app.schemas import RoutineCreate, RoutineResponse
+from app.schemas import RoutineCreate, RoutineResponse, RoutineUpdate
 
 
 class RoutineService:
@@ -36,4 +36,31 @@ class RoutineService:
             user_id=user.user_id,
             routine_id=routine_id,
         )
+        return RoutineResponse.model_validate(routine)
+
+    async def update(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        routine_id: int,
+        payload: RoutineUpdate,
+    ) -> RoutineResponse:
+        routine = await RoutinePolicy.assert_exists(
+            repo=uow.routines_repo,
+            user_id=user.user_id,
+            routine_id=routine_id,
+        )
+
+        await RoutinePolicy.assert_name_is_unique(
+            repo=uow.routines_repo,
+            user_id=user.user_id,
+            routine_name=payload.routine_name,
+            routine_id=routine_id,
+        )
+
+        routine = uow.routines_repo.update(old=routine, updated=payload)
+
+        async with catch_unique_violation(f"{payload.routine_name} already exists"):
+            await uow.flush()
+
         return RoutineResponse.model_validate(routine)
