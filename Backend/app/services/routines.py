@@ -3,6 +3,7 @@ from app.db import UnitOfWork, catch_unique_violation
 from app.models import Routine
 from app.policies import RoutineExercisePolicy, RoutinePolicy
 from app.schemas import (
+    ExerciseReorder,
     RoutineAddExercise,
     RoutineCreate,
     RoutineExerciseResponse,
@@ -179,6 +180,29 @@ class RoutineService:
         await uow.routines_exercises_repo.shift_indices_after_delete(
             [routine_id], [routine_exercise.exercise_index]
         )
+
+    async def reorder_exercises(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        routine_id: int,
+        payload: ExerciseReorder,
+    ) -> list[RoutineExerciseResponse]:
+        await RoutinePolicy.assert_exists(
+            repo=uow.routines_repo, user_id=user.user_id, routine_id=routine_id
+        )
+
+        await RoutineExercisePolicy.assert_valid_reorder(
+            repo=uow.routines_exercises_repo, routine_id=routine_id, payload=payload
+        )
+
+        exercises = await uow.routines_exercises_repo.reorder_exercises(
+            routine_id, payload
+        )
+
+        return [
+            RoutineExerciseResponse.model_validate(exercise) for exercise in exercises
+        ]
 
 
 def get_routines_service() -> RoutineService:
