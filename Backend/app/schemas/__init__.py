@@ -6,3 +6,4 @@ from .routines_exercises import (
     RoutineExerciseResponse,
     RoutineUpdateExercise,
 )
+from .shared import ExerciseReorder
