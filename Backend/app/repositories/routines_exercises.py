@@ -10,7 +10,7 @@ from app.schemas import RoutineAddExercise
 
 
 class LinkedRoutine(NamedTuple):
-    routine_id: list[int]
+    routine_ids: list[int]
     exercise_indices: list[int]
 
 
@@ -74,7 +74,7 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin):
         ).fetchall()
 
         return LinkedRoutine(
-            routine_id=[routine.routine_id for routine in routines],
+            routine_ids=[routine.routine_id for routine in routines],
             exercise_indices=[routine.exercise_index for routine in routines],
         )
 

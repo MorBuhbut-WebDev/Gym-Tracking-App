@@ -74,6 +74,22 @@ class ExerciseService:
 
         uow.exercises_repo.soft_delete(exercise)
 
+        (
+            routine_ids,
+            exercise_indices,
+        ) = await uow.routines_exercises_repo.get_linked_routines(exercise_id)
+
+        if not routine_ids:
+            return
+
+        await uow.routines_exercises_repo.delete_by_exercise(exercise_id)
+
+        await uow.flush()
+
+        await uow.routines_exercises_repo.shift_indices_after_delete(
+            parent_ids=routine_ids, deleted_indices=exercise_indices
+        )
+
 
 def get_exercises_service() -> ExerciseService:
     return ExerciseService()
