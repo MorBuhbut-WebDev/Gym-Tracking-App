@@ -1,17 +1,26 @@
 from typing import NamedTuple
 
+from pydantic import BaseModel
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RoutineExercise
 from app.repositories.base import BaseRepo
 from app.repositories.mixins import ReorderMixin, ShiftIndicesMixin
-from app.schemas import RoutineAddExercise
+from app.schemas import ExerciseReorder, RoutineAddExercise
 
 
 class LinkedRoutine(NamedTuple):
     routine_ids: list[int]
     exercise_indices: list[int]
+
+
+class RoutineExerciseRow(BaseModel):
+    exercise_id: int
+    routine_id: int
+    exercise_index: int
+    planned_sets: int
+    exercise_notes: str | None
 
 
 class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderMixin):
@@ -82,3 +91,9 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderM
         await self._session.execute(
             delete(RoutineExercise).where(RoutineExercise.exercise_id == exercise_id)
         )
+
+    async def reorder_exercises(
+        self, parent_id: int, payload: ExerciseReorder
+    ) -> list[RoutineExerciseRow]:
+        exercises = await super().reorder_exercises(parent_id, payload)
+        return [RoutineExerciseRow.model_validate(exercise) for exercise in exercises]
