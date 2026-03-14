@@ -1,4 +1,4 @@
-from typing import TypeVar, cast
+from typing import TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy import ColumnElement, select
@@ -24,7 +24,7 @@ class BaseRepo[Model]:
 
     async def get_all(self, condition: ColumnElement[bool]) -> list[Model]:
         result = await self._execute_query(condition)
-        return cast(list[Model], result.scalars().all())
+        return list(result.scalars().all())
 
     async def get(self, condition: ColumnElement[bool]) -> Model | None:
         result = await self._execute_query(condition)
