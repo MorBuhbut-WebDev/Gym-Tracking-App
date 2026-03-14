@@ -3,10 +3,12 @@ from fastapi import APIRouter, Depends
 from app.auth import User
 from app.db import UnitOfWork
 from app.dependencies import get_uow, get_user
+from app.routes.routines_exercises import routine_exercise_router
 from app.schemas import RoutineCreate, RoutineResponse, RoutineUpdate
 from app.services import RoutineService, get_routines_service
 
 routines_router = APIRouter(prefix="/routines")
+routines_router.include_router(routine_exercise_router)
 
 
 @routines_router.post("/", response_model=RoutineResponse, status_code=201)
