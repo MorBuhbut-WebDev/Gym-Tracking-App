@@ -1,10 +1,11 @@
 import uuid
 
-from app.exceptions import ConflictException, NotFoundException
+from app.exceptions import BadRequestException, ConflictException, NotFoundException
 from app.models import Exercise, Routine, RoutineExercise
 from app.policies.exercises import ExercisePolicy
 from app.policies.routines import RoutinePolicy
 from app.repositories import ExerciseRepo, RoutineExerciseRepo, RoutineRepo
+from app.schemas import ExerciseReorder
 
 
 class RoutineExercisePolicy:
@@ -59,3 +60,16 @@ class RoutineExercisePolicy:
             )
 
         return routine, routine_exercise
+
+    @staticmethod
+    async def assert_valid_reorder(
+        repo: RoutineExerciseRepo, routine_id: int, payload: ExerciseReorder
+    ) -> None:
+        routine_exercise_ids = await repo.get_exercise_ids(routine_id)
+
+        submitted_exercise_ids, _ = payload.unzip()
+
+        if set(routine_exercise_ids) != set(submitted_exercise_ids):
+            raise BadRequestException(
+                "Submitted exercises must match exactly the exercises in the routine"
+            )
