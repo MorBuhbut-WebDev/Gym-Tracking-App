@@ -1,10 +1,17 @@
-from sqlalchemy import func, select
+from typing import NamedTuple
+
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RoutineExercise
 from app.repositories.base import BaseRepo
 from app.repositories.mixins import ShiftIndicesMixin
 from app.schemas import RoutineAddExercise
+
+
+class LinkedRoutine(NamedTuple):
+    routine_id: list[int]
+    exercise_indices: list[int]
 
 
 class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin):
@@ -56,3 +63,22 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin):
         )
 
         return exercises
+
+    async def get_linked_routines(self, exercise_id: int) -> LinkedRoutine:
+        routines = (
+            await self._session.execute(
+                select(
+                    RoutineExercise.routine_id, RoutineExercise.exercise_index
+                ).where(RoutineExercise.exercise_id == exercise_id)
+            )
+        ).fetchall()
+
+        return LinkedRoutine(
+            routine_id=[routine.routine_id for routine in routines],
+            exercise_indices=[routine.exercise_index for routine in routines],
+        )
+
+    async def delete_by_exercise(self, exercise_id: int) -> None:
+        await self._session.execute(
+            delete(RoutineExercise).where(RoutineExercise.exercise_id == exercise_id)
+        )
