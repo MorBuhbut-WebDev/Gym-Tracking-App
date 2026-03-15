@@ -1,5 +1,3 @@
-from typing import cast
-
 from sqlalchemy import RowMapping, text
 
 from app.repositories.mixins.base import HasSessionAndModel
@@ -31,4 +29,4 @@ class ReorderMixin(HasSessionAndModel):
                 "parent_id": parent_id,
             },
         )
-        return cast(list[RowMapping], result.mappings().fetchall())
+        return list(result.mappings().fetchall())
