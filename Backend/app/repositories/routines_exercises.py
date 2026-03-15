@@ -111,3 +111,14 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderM
     ) -> list[RoutineExerciseRow]:
         exercises = await super().reorder_exercises(parent_id, payload)
         return [RoutineExerciseRow.model_validate(exercise) for exercise in exercises]
+
+    async def count_by_routine(self, routine_id: int) -> int:
+        result = (
+            await self._session.execute(
+                select(func.count())
+                .select_from(RoutineExercise)
+                .where(RoutineExercise.routine_id == routine_id)
+            )
+        ).scalar()
+
+        return 0 if result is None else result
