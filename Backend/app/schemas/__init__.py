@@ -7,3 +7,4 @@ from .routines_exercises import (
     RoutineUpdateExercise,
 )
 from .shared import ExerciseReorder
+from .workouts import WorkoutCreate, WorkoutNested
