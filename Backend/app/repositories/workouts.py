@@ -78,7 +78,7 @@ class WorkoutRepo(BaseRepo[Workout]):
             & (Workout.created_at < end_date)
         )
 
-    async def get_by_id(self, user_id: uuid.UUID, workout_id: int) -> Workout | None:
+    async def get_by_id(self, workout_id: int, user_id: uuid.UUID) -> Workout | None:
         return await self.get(
             condition=(Workout.user_id == user_id) & (Workout.workout_id == workout_id)
         )
