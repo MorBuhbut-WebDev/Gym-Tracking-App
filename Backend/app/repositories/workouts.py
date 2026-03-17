@@ -12,7 +12,7 @@ from app.repositories.base import BaseRepo
 
 class WorkoutDetailRow(BaseModel):
     workout_id: int
-    routine_id: int
+    routine_id: int | None
     created_at: datetime
     ended_at: datetime | None
     workout_name: str

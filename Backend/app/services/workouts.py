@@ -2,10 +2,46 @@ from app.auth import User
 from app.db import UnitOfWork
 from app.models import Workout
 from app.policies import RoutineExercisePolicy, RoutinePolicy
+from app.repositories.workouts import WorkoutDetailRow
 from app.schemas import WorkoutCreate, WorkoutFilters, WorkoutNested, WorkoutResponse
+from app.schemas.workouts_exercises import WorkoutExerciseNested
+from app.schemas.workouts_sets import WorkoutSetNested
 
 
 class WorkoutService:
+    def _build_workout_response_nested(
+        self, rows: list[WorkoutDetailRow]
+    ) -> WorkoutNested:
+        assert rows, "rows must not be empty"
+
+        exercises: dict[int, WorkoutExerciseNested] = {}
+        for row in rows:
+            exercise_id = row.exercise_id
+            if exercise_id not in exercises:
+                exercises[exercise_id] = WorkoutExerciseNested(
+                    exercise_id=row.exercise_id,
+                    exercise_index=row.exercise_index,
+                    sets=[],
+                )
+            exercises[exercise_id].sets.append(
+                WorkoutSetNested(
+                    set_id=row.set_id,
+                    set_index=row.set_index,
+                    weight=row.weight,
+                    reps=row.reps,
+                    notes=row.notes,
+                )
+            )
+
+        return WorkoutNested(
+            workout_id=rows[0].workout_id,
+            routine_id=rows[0].routine_id,
+            created_at=rows[0].created_at,
+            ended_at=rows[0].ended_at,
+            workout_name=rows[0].workout_name,
+            exercises=list(exercises.values()),
+        )
+
     async def create(
         self, uow: UnitOfWork, user: User, payload: WorkoutCreate
     ) -> WorkoutNested:
@@ -37,35 +73,7 @@ class WorkoutService:
 
         rows = await uow.workouts_repo.get_with_exercises_and_sets(workout.workout_id)
 
-        exercises = {}
-        for row in rows:
-            exercise_id = row.exercise_id
-            if exercise_id not in exercises:
-                exercises[exercise_id] = {
-                    "exercise_id": exercise_id,
-                    "exercise_index": row.exercise_index,
-                    "sets": [],
-                }
-            exercises[exercise_id]["sets"].append(
-                {
-                    "set_id": row.set_id,
-                    "set_index": row.set_index,
-                    "weight": row.weight,
-                    "reps": row.reps,
-                    "notes": row.notes,
-                }
-            )
-
-        workouts = {
-            "workout_id": workout.workout_id,
-            "routine_id": workout.routine_id,
-            "created_at": workout.created_at,
-            "ended_at": workout.ended_at,
-            "workout_name": workout.workout_name,
-            "exercises": list(exercises.values()),
-        }
-
-        return WorkoutNested.model_validate(workouts)
+        return self._build_workout_response_nested(rows)
 
     async def get_all(
         self, uow: UnitOfWork, user: User, filters: WorkoutFilters
