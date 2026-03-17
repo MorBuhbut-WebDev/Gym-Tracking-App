@@ -1,7 +1,7 @@
 from app.auth import User
 from app.db import UnitOfWork
 from app.models import Workout
-from app.policies import RoutineExercisePolicy, RoutinePolicy
+from app.policies import RoutineExercisePolicy, RoutinePolicy, WorkoutPolicy
 from app.repositories.workouts import WorkoutDetailRow
 from app.schemas import WorkoutCreate, WorkoutFilters, WorkoutNested, WorkoutResponse
 from app.schemas.workouts_exercises import WorkoutExerciseNested
@@ -83,6 +83,14 @@ class WorkoutService:
             user_id=user.user_id, start_date=start_date, end_date=end_date
         )
         return [WorkoutResponse.model_validate(workout) for workout in workouts]
+
+    async def get(self, uow: UnitOfWork, user: User, workout_id: int) -> WorkoutNested:
+        workout = await WorkoutPolicy.assert_exists(
+            repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
+        )
+        rows = await uow.workouts_repo.get_with_exercises_and_sets(workout.workout_id)
+
+        return self._build_workout_response_nested(rows)
 
 
 def get_workouts_service() -> WorkoutService:
