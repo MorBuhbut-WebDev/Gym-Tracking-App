@@ -2,7 +2,7 @@ from app.auth import User
 from app.db import UnitOfWork
 from app.models import Workout
 from app.policies import RoutineExercisePolicy, RoutinePolicy
-from app.schemas import WorkoutCreate, WorkoutNested
+from app.schemas import WorkoutCreate, WorkoutFilters, WorkoutNested, WorkoutResponse
 
 
 class WorkoutService:
@@ -66,6 +66,15 @@ class WorkoutService:
         }
 
         return WorkoutNested.model_validate(workouts)
+
+    async def get_all(
+        self, uow: UnitOfWork, user: User, filters: WorkoutFilters
+    ) -> list[WorkoutResponse]:
+        start_date, end_date = filters.to_datetime()
+        workouts = await uow.workouts_repo.get_all_by_date_range(
+            user_id=user.user_id, start_date=start_date, end_date=end_date
+        )
+        return [WorkoutResponse.model_validate(workout) for workout in workouts]
 
 
 def get_workouts_service() -> WorkoutService:
