@@ -4,12 +4,13 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.exceptions import BaseExceptionApp
-from app.routes import exercises_router, routines_router
+from app.routes import exercises_router, routines_router, workouts_router
 
 app = FastAPI()
 
 app.include_router(exercises_router)
 app.include_router(routines_router)
+app.include_router(workouts_router)
 
 
 @app.exception_handler(BaseExceptionApp)
