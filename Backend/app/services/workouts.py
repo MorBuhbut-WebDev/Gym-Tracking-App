@@ -111,6 +111,13 @@ class WorkoutService:
 
         return WorkoutResponse.model_validate(workout)
 
+    async def delete(self, uow: UnitOfWork, user: User, workout_id: int) -> None:
+        workout = await WorkoutPolicy.assert_exists(
+            repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
+        )
+
+        await uow.workouts_repo.delete(workout)
+
 
 def get_workouts_service() -> WorkoutService:
     return WorkoutService()
