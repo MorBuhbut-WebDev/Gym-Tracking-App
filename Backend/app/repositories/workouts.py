@@ -1,9 +1,10 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
+from typing import NamedTuple
 
 from pydantic import BaseModel
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Workout
@@ -23,6 +24,11 @@ class WorkoutDetailRow(BaseModel):
     weight: Decimal | None
     reps: int | None
     notes: str | None
+
+
+class WorkoutPeriod(NamedTuple):
+    created_at: datetime
+    ended_at: datetime | None
 
 
 class WorkoutRepo(BaseRepo[Workout]):
@@ -81,4 +87,21 @@ class WorkoutRepo(BaseRepo[Workout]):
     async def get_by_id(self, workout_id: int, user_id: uuid.UUID) -> Workout | None:
         return await self.get(
             condition=(Workout.user_id == user_id) & (Workout.workout_id == workout_id)
+        )
+
+    async def get_period(
+        self, workout_id: int, user_id: uuid.UUID
+    ) -> WorkoutPeriod | None:
+        row = (
+            await self._session.execute(
+                select(Workout.created_at, Workout.ended_at).where(
+                    (Workout.user_id == user_id) & (Workout.workout_id == workout_id)
+                )
+            )
+        ).fetchone()
+
+        return (
+            WorkoutPeriod(created_at=row.created_at, ended_at=row.ended_at)
+            if row
+            else None
         )
