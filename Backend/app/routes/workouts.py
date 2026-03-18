@@ -45,7 +45,7 @@ async def get_workout(
     return await service.get(uow, user, workout_id)
 
 
-@workouts_router.put("/{workout_id}", response_model=WorkoutResponse)
+@workouts_router.patch("/{workout_id}", response_model=WorkoutResponse)
 async def update_workout(
     workout_id: int,
     payload: WorkoutUpdate,
