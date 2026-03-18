@@ -49,6 +49,22 @@ class WorkoutFilters(BaseModel):
         return start, end
 
 
+class WorkoutUpdate(BaseModel):
+    created_at: datetime | None = None
+    ended_at: datetime | None = None
+
+    @model_validator(mode="after")
+    def validate_dates(self) -> Self:
+        if self.created_at is None and self.ended_at is None:
+            raise ValueError("At least one of created_at or ended_at must be provided")
+
+        if self.created_at is not None and self.ended_at is not None:
+            if self.ended_at <= self.created_at:
+                raise ValueError("ended_at must be greater than created_at")
+
+        return self
+
+
 class WorkoutBase(BaseModel):
     workout_id: int
     routine_id: int | None
