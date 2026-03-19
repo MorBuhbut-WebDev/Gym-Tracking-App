@@ -23,7 +23,7 @@ class Cache:
 
     async def _fetch_jwks(self) -> JWKSModel:
         async with httpx.AsyncClient() as client:
-            response = await client.get(settings.SUPABASE_JWKS_URl, timeout=5.0)
+            response = await client.get(settings.SUPABASE_JWKS_URl, timeout=10.0)
             response.raise_for_status()
             return JWKSModel.model_validate(response.json())
 
