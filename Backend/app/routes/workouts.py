@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.auth import User
 from app.db import UnitOfWork
-from app.dependencies import get_uow, get_user
+from app.dependencies import get_uow, get_user, get_workout_filters
 from app.schemas import (
     WorkoutCreate,
     WorkoutFilters,
@@ -27,7 +27,7 @@ async def start_workout(
 
 @workouts_router.get("/", response_model=list[WorkoutResponse])
 async def get_all_workouts(
-    filters: WorkoutFilters = Depends(),
+    filters: WorkoutFilters = Depends(get_workout_filters),
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: WorkoutService = Depends(get_workouts_service),
