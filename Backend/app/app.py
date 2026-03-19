@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,6 +12,17 @@ app = FastAPI()
 app.include_router(exercises_router)
 app.include_router(routines_router)
 app.include_router(workouts_router)
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(
+    req: Request, exc: RequestValidationError
+) -> JSONResponse:
+    print(f"[VALIDATION ERROR] {type(exc).__name__}: {exc} | Path: {req.url.path}")
+    return JSONResponse(
+        status_code=422,
+        content={"detail": " | ".join(err["msg"] for err in exc.errors())},
+    )
 
 
 @app.exception_handler(BaseExceptionApp)
