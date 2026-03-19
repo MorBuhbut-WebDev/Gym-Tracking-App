@@ -25,3 +25,9 @@ class BadRequestException(BaseExceptionApp):
     @property
     def status_code(self) -> Literal[400]:
         return 400
+
+
+class UnprocessableException(BaseExceptionApp):
+    @property
+    def status_code(self) -> Literal[422]:
+        return 422

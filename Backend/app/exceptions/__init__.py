@@ -5,4 +5,5 @@ from .domain_exceptions import (
     ConflictException,
     NotFoundException,
     UnauthorizedException,
+    UnprocessableException,
 )
