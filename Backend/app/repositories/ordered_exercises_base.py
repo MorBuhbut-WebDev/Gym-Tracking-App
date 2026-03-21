@@ -4,7 +4,6 @@ from app.models import OrderedExerciseModel
 from app.repositories.base import BaseRepo
 
 
-
 class OrderedExerciseRepo[Model: OrderedExerciseModel](BaseRepo[Model]):
     async def _compute_next_index(self, parent_id: int) -> int:
         result = (

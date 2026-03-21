@@ -5,8 +5,8 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RoutineExercise
-from app.repositories.base import BaseRepo
 from app.repositories.mixins import ReorderMixin, ShiftIndicesMixin
+from app.repositories.ordered_exercises_base import OrderedExerciseRepo
 from app.schemas import ExerciseReorder, RoutineAddExercise
 
 
@@ -23,7 +23,9 @@ class RoutineExerciseRow(BaseModel):
     exercise_notes: str | None
 
 
-class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderMixin):
+class RoutineExerciseRepo(
+    OrderedExerciseRepo[RoutineExercise], ShiftIndicesMixin, ReorderMixin
+):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(model=RoutineExercise, session=session)
 
@@ -33,15 +35,7 @@ class RoutineExerciseRepo(BaseRepo[RoutineExercise], ShiftIndicesMixin, ReorderM
         exercise_id: int,
         exercise: RoutineAddExercise,
     ) -> RoutineExercise:
-        result = (
-            await self._session.execute(
-                select(func.max(RoutineExercise.exercise_index)).where(
-                    RoutineExercise.routine_id == routine_id
-                )
-            )
-        ).scalar()
-
-        max_exercise_index = 1 if result is None else result + 1
+        max_exercise_index = await self._compute_next_index(routine_id)
 
         routine_exercise = self.add(
             RoutineExercise.create(
