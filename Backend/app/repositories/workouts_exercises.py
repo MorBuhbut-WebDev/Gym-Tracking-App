@@ -21,6 +21,18 @@ class WorkoutExerciseRepo(OrderedExerciseRepo[WorkoutExercise]):
         )
         return workout_exercise
 
+    async def get_link(
+        self,
+        workout_id: int,
+        exercise_id: int,
+    ) -> WorkoutExercise | None:
+        workout_exercise = await self.get(
+            condition=(WorkoutExercise.workout_id == workout_id)
+            & (WorkoutExercise.exercise_id == exercise_id),
+        )
+
+        return workout_exercise
+
     async def snapshot_exercises(self, workout_id: int, routine_id: int) -> None:
         await self._session.execute(
             text(
