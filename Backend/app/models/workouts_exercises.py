@@ -26,3 +26,13 @@ class WorkoutExercise(OrderedExerciseModel):
         ),
         PrimaryKeyConstraint("workout_id", "exercise_id"),
     )
+
+    @classmethod
+    def create(
+        cls, *, workout_id: int, exercise_id: int, exercise_index: int
+    ) -> "WorkoutExercise":
+        return cls(
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+            exercise_index=exercise_index,
+        )
