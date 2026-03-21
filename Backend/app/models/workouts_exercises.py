@@ -15,7 +15,6 @@ class WorkoutExercise(OrderedExerciseModel):
     exercise_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("exercises.exercise_id", ondelete="CASCADE")
     )
-    exercise_index: Mapped[int] = mapped_column(Integer)
 
     __table_args__ = (
         UniqueConstraint(

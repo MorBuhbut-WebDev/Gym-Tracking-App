@@ -21,7 +21,6 @@ class RoutineExercise(OrderedExerciseModel):
     routine_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("routines.routine_id", ondelete="CASCADE")
     )
-    exercise_index: Mapped[int] = mapped_column(Integer)
     planned_sets: Mapped[int] = mapped_column(Integer)
     exercise_notes: Mapped[str | None] = mapped_column(String(128), default=None)
 

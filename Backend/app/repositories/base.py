@@ -1,15 +1,11 @@
-from typing import TypeVar
-
 from pydantic import BaseModel
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import Base
 
-Model = TypeVar("Model", bound=Base)
 
-
-class BaseRepo[Model]:
+class BaseRepo[Model: Base]:
     def __init__(self, model: type[Model], session: AsyncSession) -> None:
         self._model = model
         self._session = session
