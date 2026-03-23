@@ -14,3 +14,4 @@ from .workouts import (
     WorkoutResponse,
     WorkoutUpdate,
 )
+from .workouts_exercises import WorkoutExerciseResponse

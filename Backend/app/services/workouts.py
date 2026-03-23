@@ -1,10 +1,17 @@
 from app.auth import User
 from app.db import UnitOfWork
 from app.models import Workout
-from app.policies import RoutineExercisePolicy, RoutinePolicy, WorkoutPolicy
+from app.policies import (
+    ExercisePolicy,
+    RoutineExercisePolicy,
+    RoutinePolicy,
+    WorkoutExercisePolicy,
+    WorkoutPolicy,
+)
 from app.repositories.workouts import WorkoutDetailRow
 from app.schemas import (
     WorkoutCreate,
+    WorkoutExerciseResponse,
     WorkoutFilters,
     WorkoutNested,
     WorkoutResponse,
@@ -117,6 +124,29 @@ class WorkoutService:
         )
 
         await uow.workouts_repo.delete(workout)
+
+    async def add_exercise(
+        self, uow: UnitOfWork, user: User, workout_id: int, exercise_id: int
+    ) -> WorkoutExerciseResponse:
+        await WorkoutPolicy.assert_exists(
+            repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
+        )
+
+        await ExercisePolicy.assert_exists(
+            repo=uow.exercises_repo, user_id=user.user_id, exercise_id=exercise_id
+        )
+
+        await WorkoutExercisePolicy.assert_not_linked(
+            repo=uow.workouts_exercises_repo,
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+        )
+
+        workout_exercise = await uow.workouts_exercises_repo.add_exercise(
+            workout_id, exercise_id
+        )
+
+        return WorkoutExerciseResponse.model_validate(workout_exercise)
 
 
 def get_workouts_service() -> WorkoutService:
