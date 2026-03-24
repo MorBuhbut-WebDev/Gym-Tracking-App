@@ -37,12 +37,7 @@ class WorkoutExerciseRepo(
         workout_id: int,
         exercise_id: int,
     ) -> WorkoutExercise | None:
-        workout_exercise = await self.get(
-            condition=(WorkoutExercise.workout_id == workout_id)
-            & (WorkoutExercise.exercise_id == exercise_id),
-        )
-
-        return workout_exercise
+        return await super().get_link(workout_id, exercise_id)
 
     async def get_exercise_ids(self, workout_id: int) -> list[int]:
         exercise_ids = (

@@ -53,12 +53,7 @@ class RoutineExerciseRepo(
         routine_id: int,
         exercise_id: int,
     ) -> RoutineExercise | None:
-        routine_exercise = await self.get(
-            condition=(RoutineExercise.routine_id == routine_id)
-            & (RoutineExercise.exercise_id == exercise_id),
-        )
-
-        return routine_exercise
+        return await super().get_link(routine_id, exercise_id)
 
     async def get_all(self, routine_id: int) -> list[RoutineExercise]:
         exercises = await super().get_all(
