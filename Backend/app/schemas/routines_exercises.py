@@ -22,9 +22,16 @@ class RoutineUpdateExercise(BaseModel):
         return self
 
 
-class RoutineExerciseResponse(AppBaseModel):
+class RoutineExerciseBase(BaseModel):
     exercise_id: int
-    routine_id: int
     exercise_index: int
     planned_sets: int
     exercise_notes: str | None
+
+
+class RoutineExerciseResponse(AppBaseModel, RoutineExerciseBase):
+    routine_id: int
+
+
+class RoutineExerciseNested(AppBaseModel, RoutineExerciseBase):
+    exercise_name: str
