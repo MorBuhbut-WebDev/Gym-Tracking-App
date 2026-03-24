@@ -9,6 +9,7 @@ from app.policies import (
 )
 from app.repositories.workouts import WorkoutDetailRow
 from app.schemas import (
+    ExerciseReorder,
     WorkoutCreate,
     WorkoutExerciseResponse,
     WorkoutFilters,
@@ -165,6 +166,29 @@ class WorkoutService:
         await uow.workouts_exercises_repo.shift_indices_after_delete(
             [workout_id], [workout_exercise.exercise_index]
         )
+
+    async def reorder_exercises(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        workout_id: int,
+        payload: ExerciseReorder,
+    ) -> list[WorkoutExerciseResponse]:
+        await WorkoutPolicy.assert_exists(
+            repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
+        )
+
+        await WorkoutExercisePolicy.assert_valid_reorder(
+            repo=uow.workouts_exercises_repo, workout_id=workout_id, payload=payload
+        )
+
+        exercises = await uow.workouts_exercises_repo.reorder_exercises(
+            workout_id, payload
+        )
+
+        return [
+            WorkoutExerciseResponse.model_validate(exercise) for exercise in exercises
+        ]
 
 
 def get_workouts_service() -> WorkoutService:
