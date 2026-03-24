@@ -18,3 +18,15 @@ class OrderedExerciseRepo[Model: OrderedExerciseModel](BaseRepo[Model]):
             raise ValueError(f"Expected an integer result, got {type(result)}")
 
         return 1 if result is None else result + 1
+
+    async def get_link(
+        self,
+        parent_id: int,
+        exercise_id: int,
+    ) -> Model | None:
+        result = await self.get(
+            condition=(getattr(self._model, self._model.PARENT_ID) == parent_id)
+            & (self._model.exercise_id == exercise_id),
+        )
+
+        return result
