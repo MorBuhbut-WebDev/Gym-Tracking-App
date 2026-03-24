@@ -4,7 +4,7 @@ from app.auth import User
 from app.db import UnitOfWork
 from app.dependencies import get_uow, get_user
 from app.routes.routines_exercises import routine_exercise_router
-from app.schemas import RoutineCreate, RoutineResponse, RoutineUpdate
+from app.schemas import RoutineCreate, RoutineNested, RoutineResponse, RoutineUpdate
 from app.services import RoutineService, get_routines_service
 
 routines_router = APIRouter(prefix="/routines")
@@ -30,7 +30,7 @@ async def get_all_routines(
     return await service.get_all(uow, user)
 
 
-@routines_router.get("/{routine_id}", response_model=RoutineResponse)
+@routines_router.get("/{routine_id}", response_model=RoutineNested)
 async def get_routine(
     routine_id: int,
     uow: UnitOfWork = Depends(get_uow),
