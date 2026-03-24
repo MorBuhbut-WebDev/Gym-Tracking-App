@@ -7,10 +7,12 @@ from app.schemas import (
     RoutineAddExercise,
     RoutineCreate,
     RoutineExerciseResponse,
+    RoutineNested,
     RoutineResponse,
     RoutineUpdate,
     RoutineUpdateExercise,
 )
+from app.schemas.routines_exercises import RoutineExerciseNested
 
 
 class RoutineService:
@@ -36,15 +38,35 @@ class RoutineService:
         routines = await uow.routines_repo.get_all(user.user_id)
         return [RoutineResponse.model_validate(routine) for routine in routines]
 
-    async def get(
-        self, uow: UnitOfWork, user: User, routine_id: int
-    ) -> RoutineResponse:
+    async def get(self, uow: UnitOfWork, user: User, routine_id: int) -> RoutineNested:
         routine = await RoutinePolicy.assert_exists(
             repo=uow.routines_repo,
             user_id=user.user_id,
             routine_id=routine_id,
         )
-        return RoutineResponse.model_validate(routine)
+
+        rows = await uow.routines_repo.get_with_exercises(routine.routine_id)
+
+        assert rows, "rows must not be empty"
+
+        exercises: dict[int, RoutineExerciseNested] = {}
+        for row in rows:
+            exercise_id = row.exercise_id
+            if exercise_id not in exercises:
+                exercises[exercise_id] = RoutineExerciseNested(
+                    exercise_id=exercise_id,
+                    exercise_index=row.exercise_index,
+                    planned_sets=row.planned_sets,
+                    exercise_notes=row.exercise_notes,
+                    exercise_name=row.exercise_name,
+                )
+
+        return RoutineNested(
+            routine_id=routine.routine_id,
+            user_id=user.user_id,
+            routine_name=routine.routine_name,
+            exercises=list(exercises.values()),
+        )
 
     async def update(
         self,
