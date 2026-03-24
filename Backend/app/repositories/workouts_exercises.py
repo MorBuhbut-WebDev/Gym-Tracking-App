@@ -3,7 +3,6 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import WorkoutExercise
-from app.repositories.mixins import ReorderMixin, ShiftIndicesMixin
 from app.repositories.ordered_exercises_base import OrderedExerciseRepo
 from app.schemas import ExerciseReorder
 
@@ -14,9 +13,7 @@ class WorkoutExerciseRow(BaseModel):
     exercise_index: int
 
 
-class WorkoutExerciseRepo(
-    OrderedExerciseRepo[WorkoutExercise], ShiftIndicesMixin, ReorderMixin
-):
+class WorkoutExerciseRepo(OrderedExerciseRepo[WorkoutExercise]):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(model=WorkoutExercise, session=session)
 

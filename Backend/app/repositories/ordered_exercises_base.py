@@ -2,9 +2,12 @@ from sqlalchemy import func, select
 
 from app.models import OrderedExerciseModel
 from app.repositories.base import BaseRepo
+from app.repositories.mixins import ReorderMixin, ShiftIndicesMixin
 
 
-class OrderedExerciseRepo[Model: OrderedExerciseModel](BaseRepo[Model]):
+class OrderedExerciseRepo[Model: OrderedExerciseModel](
+    BaseRepo[Model], ReorderMixin, ShiftIndicesMixin
+):
     async def _compute_next_index(self, parent_id: int) -> int:
         result = (
             await self._session.execute(
