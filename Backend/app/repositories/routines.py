@@ -1,9 +1,22 @@
 import uuid
 
+from pydantic import BaseModel
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Routine
 from app.repositories.base import BaseRepo
+
+
+class RoutineDetailRow(BaseModel):
+    routine_id: int
+    user_id: uuid.UUID
+    routine_name: str
+    exercise_id: int
+    exercise_index: int
+    planned_sets: int
+    exercise_notes: str | None
+    exercise_name: str
 
 
 class RoutineRepo(BaseRepo[Routine]):
@@ -34,3 +47,36 @@ class RoutineRepo(BaseRepo[Routine]):
                 (Routine.user_id == user_id) & (Routine.routine_id == routine_id)
             ),
         )
+
+    async def get_with_exercises(self, routine_id: int) -> list[RoutineDetailRow]:
+        rows = (
+            (
+                await self._session.execute(
+                    text(
+                        """
+                    SELECT
+                        r.routine_id,
+                        r.user_id,
+                        r.routine_name,
+                        re.exercise_id,
+                        re.exercise_index,
+                        re.planned_sets,
+                        re.exercise_notes,
+                        e.exercise_name
+                    FROM routines_exercises re
+                    JOIN routines r
+                      ON re.routine_id = r.routine_id
+                    JOIN exercises e
+                      ON re.exercise_id = e.exercise_id
+                    WHERE r.routine_id = :routine_id
+                    ORDER BY re.exercise_index 
+                    """
+                    ),
+                    {"routine_id": routine_id},
+                )
+            )
+            .mappings()
+            .fetchall()
+        )
+
+        return [RoutineDetailRow.model_validate(row) for row in rows]
