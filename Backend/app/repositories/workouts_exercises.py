@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import WorkoutExercise
@@ -40,18 +40,7 @@ class WorkoutExerciseRepo(
         return await super().get_link(workout_id, exercise_id)
 
     async def get_exercise_ids(self, workout_id: int) -> list[int]:
-        exercise_ids = (
-            (
-                await self._session.execute(
-                    select(WorkoutExercise.exercise_id).where(
-                        WorkoutExercise.workout_id == workout_id
-                    )
-                )
-            )
-            .scalars()
-            .all()
-        )
-        return list(exercise_ids)
+        return await super().get_exercise_ids(workout_id)
 
     async def reorder_exercises(
         self, parent_id: int, payload: ExerciseReorder

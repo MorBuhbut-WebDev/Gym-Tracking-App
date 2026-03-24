@@ -63,18 +63,7 @@ class RoutineExerciseRepo(
         return exercises
 
     async def get_exercise_ids(self, routine_id: int) -> list[int]:
-        exercise_ids = (
-            (
-                await self._session.execute(
-                    select(RoutineExercise.exercise_id).where(
-                        RoutineExercise.routine_id == routine_id
-                    )
-                )
-            )
-            .scalars()
-            .all()
-        )
-        return list(exercise_ids)
+        return await super().get_exercise_ids(routine_id)
 
     async def get_linked_routines(self, exercise_id: int) -> LinkedRoutine:
         routines = (
