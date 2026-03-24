@@ -15,9 +15,6 @@ class RoutineExercise(OrderedExerciseModel):
     EXERCISE_INDEX_CONSTRAINT = "uq_routine_exercise_order"
     PARENT_ID = "routine_id"
 
-    exercise_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("exercises.exercise_id", ondelete="CASCADE")
-    )
     routine_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("routines.routine_id", ondelete="CASCADE")
     )
