@@ -149,6 +149,23 @@ class WorkoutService:
 
         return WorkoutExerciseResponse.model_validate(workout_exercise)
 
+    async def delete_exercise(
+        self, uow: UnitOfWork, user: User, workout_id: int, exercise_id: int
+    ) -> None:
+        _, workout_exercise = await WorkoutExercisePolicy.assert_link_exists(
+            workouts_repo=uow.workouts_repo,
+            workouts_exercises_repo=uow.workouts_exercises_repo,
+            user_id=user.user_id,
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+        )
+
+        await uow.workouts_exercises_repo.delete(workout_exercise)
+        await uow.flush()
+        await uow.workouts_exercises_repo.shift_indices_after_delete(
+            [workout_id], [workout_exercise.exercise_index]
+        )
+
 
 def get_workouts_service() -> WorkoutService:
     return WorkoutService()
