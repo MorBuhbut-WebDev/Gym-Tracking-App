@@ -30,3 +30,17 @@ class OrderedExerciseRepo[Model: OrderedExerciseModel](BaseRepo[Model]):
         )
 
         return result
+
+    async def get_exercise_ids(self, parent_id: int) -> list[int]:
+        exercise_ids = (
+            (
+                await self._session.execute(
+                    select(self._model.exercise_id).where(
+                        getattr(self._model, self._model.PARENT_ID) == parent_id
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        return list(exercise_ids)
