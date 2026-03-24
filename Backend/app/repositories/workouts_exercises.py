@@ -1,9 +1,17 @@
+from pydantic import BaseModel
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import WorkoutExercise
 from app.repositories.mixins import ReorderMixin, ShiftIndicesMixin
 from app.repositories.ordered_exercises_base import OrderedExerciseRepo
+from app.schemas import ExerciseReorder
+
+
+class WorkoutExerciseRow(BaseModel):
+    exercise_id: int
+    workout_id: int
+    exercise_index: int
 
 
 class WorkoutExerciseRepo(
@@ -49,6 +57,12 @@ class WorkoutExerciseRepo(
             .all()
         )
         return list(exercise_ids)
+
+    async def reorder_exercises(
+        self, parent_id: int, payload: ExerciseReorder
+    ) -> list[WorkoutExerciseRow]:
+        exercises = await super().reorder_exercises(parent_id, payload)
+        return [WorkoutExerciseRow.model_validate(exercise) for exercise in exercises]
 
     async def snapshot_exercises(self, workout_id: int, routine_id: int) -> None:
         await self._session.execute(
