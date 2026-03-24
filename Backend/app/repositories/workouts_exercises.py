@@ -1,4 +1,4 @@
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import WorkoutExercise
@@ -33,6 +33,20 @@ class WorkoutExerciseRepo(OrderedExerciseRepo[WorkoutExercise], ShiftIndicesMixi
         )
 
         return workout_exercise
+
+    async def get_exercise_ids(self, workout_id: int) -> list[int]:
+        exercise_ids = (
+            (
+                await self._session.execute(
+                    select(WorkoutExercise.exercise_id).where(
+                        WorkoutExercise.workout_id == workout_id
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        return list(exercise_ids)
 
     async def snapshot_exercises(self, workout_id: int, routine_id: int) -> None:
         await self._session.execute(
