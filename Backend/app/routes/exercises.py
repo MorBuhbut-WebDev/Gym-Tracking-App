@@ -28,14 +28,14 @@ async def get_all_exercises(
     return await service.get_all(uow, user)
 
 
-@exercises_router.put("/{exercise_id}", response_model=ExerciseResponse)
+@exercises_router.put("/{exercise_id}", status_code=204)
 async def update_exercise(
     exercise_id: int,
     payload: ExerciseUpdate,
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: ExerciseService = Depends(get_exercises_service),
-) -> ExerciseResponse:
+) -> None:
     return await service.update(uow, user, exercise_id, payload)
 
 
