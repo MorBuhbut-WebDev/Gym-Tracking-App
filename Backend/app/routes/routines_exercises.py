@@ -28,16 +28,6 @@ async def add_exercise(
     return await service.add_exercise(uow, user, routine_id, exercise_id, payload)
 
 
-@routine_exercise_router.get("/", response_model=list[RoutineExerciseResponse])
-async def get_all_exercises(
-    routine_id: int,
-    uow: UnitOfWork = Depends(get_uow),
-    user: User = Depends(get_user),
-    service: RoutineService = Depends(get_routines_service),
-):
-    return await service.get_all_exercises(uow, user, routine_id)
-
-
 @routine_exercise_router.get("/{exercise_id}", response_model=RoutineExerciseResponse)
 async def get_exercise(
     routine_id: int,
