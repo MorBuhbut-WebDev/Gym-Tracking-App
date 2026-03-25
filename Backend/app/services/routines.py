@@ -108,7 +108,7 @@ class RoutineService:
         routine_id: int,
         exercise_id: int,
         payload: RoutineAddExercise,
-    ) -> RoutineExerciseResponse:
+    ) -> None:
         await RoutineExercisePolicy.assert_accessible(
             exercises_repo=uow.exercises_repo,
             routines_repo=uow.routines_repo,
@@ -123,15 +123,13 @@ class RoutineService:
             exercise_id=exercise_id,
         )
 
-        routine_exercise = await uow.routines_exercises_repo.add_exercise(
+        await uow.routines_exercises_repo.add_exercise(
             routine_id,
             exercise_id,
             payload,
         )
 
         await uow.flush()
-
-        return RoutineExerciseResponse.model_validate(routine_exercise)
 
     async def get_exercise(
         self, uow: UnitOfWork, user: User, routine_id: int, exercise_id: int
