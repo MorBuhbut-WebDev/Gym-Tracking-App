@@ -17,7 +17,7 @@ async def create_routine(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> RoutineResponse:
     return await service.create(uow, user, payload)
 
 
@@ -26,7 +26,7 @@ async def get_all_routines(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> list[RoutineResponse]:
     return await service.get_all(uow, user)
 
 
@@ -36,18 +36,18 @@ async def get_routine(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> RoutineNested:
     return await service.get(uow, user, routine_id)
 
 
-@routines_router.put("/{routine_id}", response_model=RoutineResponse)
+@routines_router.put("/{routine_id}", status_code=204)
 async def update_routine(
     routine_id: int,
     payload: RoutineUpdate,
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> None:
     return await service.update(uow, user, routine_id, payload)
 
 
@@ -57,5 +57,5 @@ async def delete_routine(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> None:
     await service.delete(uow, user, routine_id)
