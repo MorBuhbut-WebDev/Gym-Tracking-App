@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import RoutineExercise
+from app.models import Exercise, RoutineExercise
 from app.repositories.ordered_exercises_base import OrderedExerciseRepo
 from app.schemas import ExerciseReorder, RoutineAddExercise
 
@@ -18,6 +18,7 @@ class RoutineExerciseRow(BaseModel):
     exercise_id: int
     routine_id: int
     exercise_index: int
+    exercise_name: str
     planned_sets: int
     exercise_notes: str | None
 
@@ -51,6 +52,33 @@ class RoutineExerciseRepo(OrderedExerciseRepo[RoutineExercise]):
         exercise_id: int,
     ) -> RoutineExercise | None:
         return await super().get_link(routine_id, exercise_id)
+
+    async def get_detailed_link(
+        self, routine_id: int, exercise_id: int
+    ) -> RoutineExerciseRow:
+        routine_exercise = (
+            (
+                await self._session.execute(
+                    select(
+                        RoutineExercise.exercise_id,
+                        RoutineExercise.routine_id,
+                        RoutineExercise.exercise_index,
+                        Exercise.exercise_name,
+                        RoutineExercise.planned_sets,
+                        RoutineExercise.exercise_notes,
+                    )
+                    .join(Exercise, Exercise.exercise_id == RoutineExercise.exercise_id)
+                    .where(
+                        RoutineExercise.routine_id == routine_id,
+                        RoutineExercise.exercise_id == exercise_id,
+                    )
+                )
+            )
+            .mappings()
+            .one()
+        )
+
+        return RoutineExerciseRow.model_validate(routine_exercise)
 
     async def get_exercise_ids(self, routine_id: int) -> list[int]:
         return await super().get_exercise_ids(routine_id)
