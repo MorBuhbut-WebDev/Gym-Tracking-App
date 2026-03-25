@@ -28,16 +28,6 @@ class ExerciseService:
         exercises = await uow.exercises_repo.get_all(user.user_id)
         return [ExerciseResponse.model_validate(exercise) for exercise in exercises]
 
-    async def get(
-        self, uow: UnitOfWork, user: User, exercise_id: int
-    ) -> ExerciseResponse:
-        exercise = await ExercisePolicy.assert_exists(
-            repo=uow.exercises_repo,
-            user_id=user.user_id,
-            exercise_id=exercise_id,
-        )
-        return ExerciseResponse.model_validate(exercise)
-
     async def update(
         self,
         uow: UnitOfWork,
