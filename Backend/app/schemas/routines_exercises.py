@@ -25,6 +25,7 @@ class RoutineUpdateExercise(BaseModel):
 class RoutineExerciseBase(BaseModel):
     exercise_id: int
     exercise_index: int
+    exercise_name: str
     planned_sets: int
     exercise_notes: str | None
 
@@ -34,4 +35,4 @@ class RoutineExerciseResponse(AppBaseModel, RoutineExerciseBase):
 
 
 class RoutineExerciseNested(AppBaseModel, RoutineExerciseBase):
-    exercise_name: str
+    pass
