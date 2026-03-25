@@ -134,12 +134,16 @@ class RoutineService:
     async def get_exercise(
         self, uow: UnitOfWork, user: User, routine_id: int, exercise_id: int
     ) -> RoutineExerciseResponse:
-        _, routine_exercise = await RoutineExercisePolicy.assert_link_exists(
+        await RoutineExercisePolicy.assert_link_exists(
             routines_repo=uow.routines_repo,
             routines_exercises_repo=uow.routines_exercises_repo,
             user_id=user.user_id,
             routine_id=routine_id,
             exercise_id=exercise_id,
+        )
+
+        routine_exercise = await uow.routines_exercises_repo.get_detailed_link(
+            routine_id, exercise_id
         )
 
         return RoutineExerciseResponse.model_validate(routine_exercise)
