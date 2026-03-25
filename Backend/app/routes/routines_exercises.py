@@ -14,9 +14,7 @@ from app.services import RoutineService, get_routines_service
 routine_exercise_router = APIRouter(prefix="/{routine_id}/exercises")
 
 
-@routine_exercise_router.post(
-    "/{exercise_id}", response_model=RoutineExerciseResponse, status_code=201
-)
+@routine_exercise_router.post("/{exercise_id}", status_code=204)
 async def add_exercise(
     routine_id: int,
     exercise_id: int,
@@ -24,7 +22,7 @@ async def add_exercise(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> None:
     return await service.add_exercise(uow, user, routine_id, exercise_id, payload)
 
 
@@ -35,22 +33,22 @@ async def get_exercise(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> RoutineExerciseResponse:
     return await service.get_exercise(uow, user, routine_id, exercise_id)
 
 
-@routine_exercise_router.put("/", response_model=list[RoutineExerciseResponse])
+@routine_exercise_router.put("/", status_code=204)
 async def reorder_exercises(
     routine_id: int,
     payload: ExerciseReorder,
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> None:
     return await service.reorder_exercises(uow, user, routine_id, payload)
 
 
-@routine_exercise_router.patch("/{exercise_id}", response_model=RoutineExerciseResponse)
+@routine_exercise_router.patch("/{exercise_id}", status_code=204)
 async def update_exercise(
     routine_id: int,
     exercise_id: int,
@@ -58,7 +56,7 @@ async def update_exercise(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> None:
     return await service.update_exercise(uow, user, routine_id, exercise_id, payload)
 
 
@@ -69,5 +67,5 @@ async def delete_exercise(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: RoutineService = Depends(get_routines_service),
-):
+) -> None:
     await service.delete_exercise(uow, user, routine_id, exercise_id)
