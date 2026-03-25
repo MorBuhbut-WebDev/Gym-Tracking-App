@@ -103,10 +103,9 @@ class RoutineExerciseRepo(OrderedExerciseRepo[RoutineExercise]):
         )
 
     async def reorder_exercises(
-        self, parent_id: int, payload: ExerciseReorder
-    ) -> list[RoutineExerciseRow]:
-        exercises = await super().reorder_exercises(parent_id, payload)
-        return [RoutineExerciseRow.model_validate(exercise) for exercise in exercises]
+        self, routine_id: int, payload: ExerciseReorder
+    ) -> None:
+        await super().reorder_exercises(routine_id, payload)
 
     async def count_by_routine(self, routine_id: int) -> int:
         result = (
