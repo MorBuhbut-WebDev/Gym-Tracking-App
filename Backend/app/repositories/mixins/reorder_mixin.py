@@ -1,18 +1,16 @@
-from sqlalchemy import RowMapping, text
+from sqlalchemy import text
 
 from app.repositories.mixins.base import HasSessionAndModel
 from app.schemas import ExerciseReorder
 
 
 class ReorderMixin(HasSessionAndModel):
-    async def reorder_exercises(
-        self, parent_id: int, payload: ExerciseReorder
-    ) -> list[RowMapping]:
+    async def reorder_exercises(self, parent_id: int, payload: ExerciseReorder) -> None:
         await self._session.execute(
             text(f"SET CONSTRAINTS {self._model.EXERCISE_INDEX_CONSTRAINT} DEFERRED")
         )
         exercises = payload.unzip()
-        result = await self._session.execute(
+        await self._session.execute(
             text(
                 f"""
             UPDATE {self._model.__tablename__} t
@@ -29,4 +27,3 @@ class ReorderMixin(HasSessionAndModel):
                 "parent_id": parent_id,
             },
         )
-        return list(result.mappings().fetchall())
