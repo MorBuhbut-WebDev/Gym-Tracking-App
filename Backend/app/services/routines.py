@@ -63,7 +63,6 @@ class RoutineService:
 
         return RoutineNested(
             routine_id=routine.routine_id,
-            user_id=user.user_id,
             routine_name=routine.routine_name,
             exercises=list(exercises.values()),
         )
@@ -74,7 +73,7 @@ class RoutineService:
         user: User,
         routine_id: int,
         payload: RoutineUpdate,
-    ) -> RoutineResponse:
+    ) -> None:
         routine = await RoutinePolicy.assert_exists(
             repo=uow.routines_repo,
             user_id=user.user_id,
@@ -88,12 +87,10 @@ class RoutineService:
             routine_id=routine_id,
         )
 
-        routine = uow.routines_repo.update(old=routine, updated=payload)
+        uow.routines_repo.update(old=routine, updated=payload)
 
         async with catch_unique_violation(f"{payload.routine_name} already exists"):
             await uow.flush()
-
-        return RoutineResponse.model_validate(routine)
 
     async def delete(self, uow: UnitOfWork, user: User, routine_id: int) -> None:
         routine = await RoutinePolicy.assert_exists(
