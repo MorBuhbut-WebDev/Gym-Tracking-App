@@ -1,5 +1,3 @@
-import uuid
-
 from pydantic import BaseModel
 
 from app.schemas.routines_exercises import RoutineExerciseNested
@@ -21,7 +19,6 @@ class RoutineUpdate(RoutineBase):
 
 class RoutineBaseRespone(BaseModel):
     routine_id: int
-    user_id: uuid.UUID
     routine_name: str
 
 
