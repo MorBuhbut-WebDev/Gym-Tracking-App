@@ -1,4 +1,3 @@
-import uuid
 from datetime import date
 
 from pydantic import BaseModel
@@ -21,7 +20,5 @@ class ExerciseUpdate(ExerciseBase):
 
 class ExerciseResponse(AppBaseModel):
     exercise_id: int
-    user_id: uuid.UUID
     exercise_name: str
     begda: date
-    endda: date
