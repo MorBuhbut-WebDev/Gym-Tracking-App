@@ -34,7 +34,7 @@ class ExerciseService:
         user: User,
         exercise_id: int,
         payload: ExerciseUpdate,
-    ) -> ExerciseResponse:
+    ) -> None:
         exercise = await ExercisePolicy.assert_exists(
             repo=uow.exercises_repo,
             user_id=user.user_id,
@@ -48,12 +48,10 @@ class ExerciseService:
             exercise_id=exercise_id,
         )
 
-        exercise = uow.exercises_repo.update(old=exercise, updated=payload)
+        uow.exercises_repo.update(old=exercise, updated=payload)
 
         async with catch_unique_violation(f"{payload.exercise_name} already exists"):
             await uow.flush()
-
-        return ExerciseResponse.model_validate(exercise)
 
     async def delete(self, uow: UnitOfWork, user: User, exercise_id: int) -> None:
         exercise = await ExercisePolicy.assert_exists(
