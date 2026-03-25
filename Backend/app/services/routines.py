@@ -193,7 +193,7 @@ class RoutineService:
         user: User,
         routine_id: int,
         payload: ExerciseReorder,
-    ) -> list[RoutineExerciseResponse]:
+    ) -> None:
         await RoutinePolicy.assert_exists(
             repo=uow.routines_repo, user_id=user.user_id, routine_id=routine_id
         )
@@ -202,13 +202,7 @@ class RoutineService:
             repo=uow.routines_exercises_repo, routine_id=routine_id, payload=payload
         )
 
-        exercises = await uow.routines_exercises_repo.reorder_exercises(
-            routine_id, payload
-        )
-
-        return [
-            RoutineExerciseResponse.model_validate(exercise) for exercise in exercises
-        ]
+        await uow.routines_exercises_repo.reorder_exercises(routine_id, payload)
 
 
 def get_routines_service() -> RoutineService:
