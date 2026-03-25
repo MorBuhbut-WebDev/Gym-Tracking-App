@@ -155,7 +155,7 @@ class RoutineService:
         routine_id: int,
         exercise_id: int,
         payload: RoutineUpdateExercise,
-    ) -> RoutineExerciseResponse:
+    ) -> None:
         _, routine_exercise = await RoutineExercisePolicy.assert_link_exists(
             routines_repo=uow.routines_repo,
             routines_exercises_repo=uow.routines_exercises_repo,
@@ -164,11 +164,7 @@ class RoutineService:
             exercise_id=exercise_id,
         )
 
-        routine_exercise = uow.routines_exercises_repo.update(
-            old=routine_exercise, updated=payload
-        )
-
-        return RoutineExerciseResponse.model_validate(routine_exercise)
+        uow.routines_exercises_repo.update(old=routine_exercise, updated=payload)
 
     async def delete_exercise(
         self, uow: UnitOfWork, user: User, routine_id: int, exercise_id: int
