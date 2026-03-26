@@ -69,7 +69,7 @@ class WorkoutUpdate(BaseModel):
         return self
 
 
-class WorkoutBase(BaseModel):
+class WorkoutResponse(AppBaseModel):
     workout_id: int
     routine_id: int | None
     created_at: datetime
@@ -77,9 +77,5 @@ class WorkoutBase(BaseModel):
     workout_name: str
 
 
-class WorkoutResponse(WorkoutBase, AppBaseModel):
-    pass
-
-
-class WorkoutNested(WorkoutBase, AppBaseModel):
+class WorkoutNested(WorkoutResponse, AppBaseModel):
     exercises: list[WorkoutExerciseNested]
