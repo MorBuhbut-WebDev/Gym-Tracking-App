@@ -15,13 +15,13 @@ from app.services import WorkoutService, get_workouts_service
 workouts_router = APIRouter(prefix="/workouts")
 
 
-@workouts_router.post("/", response_model=WorkoutNested, status_code=201)
+@workouts_router.post("/", response_model=WorkoutResponse, status_code=201)
 async def start_workout(
     payload: WorkoutCreate,
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: WorkoutService = Depends(get_workouts_service),
-):
+) -> WorkoutResponse:
     return await service.create(uow, user, payload)
 
 
@@ -31,7 +31,7 @@ async def get_all_workouts(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: WorkoutService = Depends(get_workouts_service),
-):
+) -> list[WorkoutResponse]:
     return await service.get_all(uow, user, filters)
 
 
@@ -41,18 +41,18 @@ async def get_workout(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: WorkoutService = Depends(get_workouts_service),
-):
+) -> WorkoutNested:
     return await service.get(uow, user, workout_id)
 
 
-@workouts_router.patch("/{workout_id}", response_model=WorkoutResponse)
+@workouts_router.patch("/{workout_id}", status_code=204)
 async def update_workout(
     workout_id: int,
     payload: WorkoutUpdate,
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: WorkoutService = Depends(get_workouts_service),
-):
+) -> None:
     return await service.update(uow, user, workout_id, payload)
 
 
@@ -62,5 +62,5 @@ async def delete_workout(
     uow: UnitOfWork = Depends(get_uow),
     user: User = Depends(get_user),
     service: WorkoutService = Depends(get_workouts_service),
-):
+) -> None:
     await service.delete(uow, user, workout_id)
