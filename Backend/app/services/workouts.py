@@ -57,7 +57,7 @@ class WorkoutService:
 
     async def create(
         self, uow: UnitOfWork, user: User, payload: WorkoutCreate
-    ) -> WorkoutNested:
+    ) -> WorkoutResponse:
         routine = await RoutinePolicy.assert_exists(
             repo=uow.routines_repo, user_id=user.user_id, routine_id=payload.routine_id
         )
@@ -84,9 +84,7 @@ class WorkoutService:
             workout_id=workout.workout_id, routine_id=payload.routine_id
         )
 
-        rows = await uow.workouts_repo.get_with_exercises_and_sets(workout.workout_id)
-
-        return self._build_workout_response_nested(rows)
+        return WorkoutResponse.model_validate(workout)
 
     async def get_all(
         self, uow: UnitOfWork, user: User, filters: WorkoutFilters
