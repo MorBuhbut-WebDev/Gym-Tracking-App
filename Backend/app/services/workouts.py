@@ -7,7 +7,6 @@ from app.policies import (
     WorkoutExercisePolicy,
     WorkoutPolicy,
 )
-from app.repositories.workouts import WorkoutDetailRow
 from app.schemas import (
     ExerciseReorder,
     WorkoutCreate,
@@ -18,43 +17,10 @@ from app.schemas import (
     WorkoutUpdate,
 )
 from app.schemas.workouts_exercises import WorkoutExerciseNested
-from app.schemas.workouts_sets import WorkoutSetNested
+from app.schemas.workouts_sets import WorkoutSetResponse
 
 
 class WorkoutService:
-    def _build_workout_response_nested(
-        self, rows: list[WorkoutDetailRow]
-    ) -> WorkoutNested:
-        assert rows, "rows must not be empty"
-
-        exercises: dict[int, WorkoutExerciseNested] = {}
-        for row in rows:
-            exercise_id = row.exercise_id
-            if exercise_id not in exercises:
-                exercises[exercise_id] = WorkoutExerciseNested(
-                    exercise_id=row.exercise_id,
-                    exercise_index=row.exercise_index,
-                    sets=[],
-                )
-            exercises[exercise_id].sets.append(
-                WorkoutSetNested(
-                    set_id=row.set_id,
-                    set_index=row.set_index,
-                    weight=row.weight,
-                    reps=row.reps,
-                    notes=row.notes,
-                )
-            )
-
-        return WorkoutNested(
-            workout_id=rows[0].workout_id,
-            routine_id=rows[0].routine_id,
-            created_at=rows[0].created_at,
-            ended_at=rows[0].ended_at,
-            workout_name=rows[0].workout_name,
-            exercises=list(exercises.values()),
-        )
-
     async def create(
         self, uow: UnitOfWork, user: User, payload: WorkoutCreate
     ) -> WorkoutResponse:
@@ -101,7 +67,36 @@ class WorkoutService:
         )
         rows = await uow.workouts_repo.get_with_exercises_and_sets(workout.workout_id)
 
-        return self._build_workout_response_nested(rows)
+        assert rows, "rows can't be empty"
+
+        exercises: dict[int, WorkoutExerciseNested] = {}
+        for row in rows:
+            exercise_id = row.exercise_id
+            if exercise_id not in exercises:
+                exercises[exercise_id] = WorkoutExerciseNested(
+                    exercise_id=row.exercise_id,
+                    exercise_index=row.exercise_index,
+                    exercise_name=row.exercise_name,
+                    sets=[],
+                )
+            exercises[exercise_id].sets.append(
+                WorkoutSetResponse(
+                    set_id=row.set_id,
+                    set_index=row.set_index,
+                    weight=row.weight,
+                    reps=row.reps,
+                    notes=row.notes,
+                )
+            )
+
+        return WorkoutNested(
+            workout_id=rows[0].workout_id,
+            routine_id=rows[0].routine_id,
+            created_at=rows[0].created_at,
+            ended_at=rows[0].ended_at,
+            workout_name=rows[0].workout_name,
+            exercises=list(exercises.values()),
+        )
 
     async def update(
         self, uow: UnitOfWork, user: User, workout_id: int, payload: WorkoutUpdate
