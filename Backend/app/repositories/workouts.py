@@ -19,6 +19,7 @@ class WorkoutDetailRow(BaseModel):
     workout_name: str
     exercise_id: int
     exercise_index: int
+    exercise_name: str
     set_id: int
     set_index: int
     weight: Decimal | None
@@ -51,6 +52,7 @@ class WorkoutRepo(BaseRepo[Workout]):
                         w.workout_name,
                         we.exercise_id,
                         we.exercise_index,
+                        e.exercise_name,
                         ws.set_id,
                         ws.set_index,
                         ws.weight,
@@ -62,6 +64,8 @@ class WorkoutRepo(BaseRepo[Workout]):
                     JOIN workouts_sets ws
                       ON ws.workout_id = we.workout_id
                      AND ws.exercise_id = we.exercise_id
+                    JOIN exercises e
+                      ON e.exercise_id = we.exercise_id
                     WHERE w.workout_id = :workout_id
                     ORDER BY we.exercise_index, ws.set_index
                     """
