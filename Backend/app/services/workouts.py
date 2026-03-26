@@ -164,7 +164,7 @@ class WorkoutService:
         user: User,
         workout_id: int,
         payload: ExerciseReorder,
-    ) -> list[WorkoutExerciseResponse]:
+    ) -> None:
         await WorkoutPolicy.assert_exists(
             repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
         )
@@ -173,13 +173,7 @@ class WorkoutService:
             repo=uow.workouts_exercises_repo, workout_id=workout_id, payload=payload
         )
 
-        exercises = await uow.workouts_exercises_repo.reorder_exercises(
-            workout_id, payload
-        )
-
-        return [
-            WorkoutExerciseResponse.model_validate(exercise) for exercise in exercises
-        ]
+        await uow.workouts_exercises_repo.reorder_exercises(workout_id, payload)
 
 
 def get_workouts_service() -> WorkoutService:
