@@ -10,14 +10,14 @@ from app.policies import (
 from app.schemas import (
     ExerciseReorder,
     WorkoutCreate,
+    WorkoutExerciseNested,
     WorkoutExerciseResponse,
     WorkoutFilters,
     WorkoutNested,
     WorkoutResponse,
+    WorkoutSetResponse,
     WorkoutUpdate,
 )
-from app.schemas.workouts_exercises import WorkoutExerciseNested
-from app.schemas.workouts_sets import WorkoutSetResponse
 
 
 class WorkoutService:
@@ -100,16 +100,14 @@ class WorkoutService:
 
     async def update(
         self, uow: UnitOfWork, user: User, workout_id: int, payload: WorkoutUpdate
-    ) -> WorkoutResponse:
+    ) -> None:
         workout = await WorkoutPolicy.assert_exists(
             repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
         )
 
-        await WorkoutPolicy.assert_update_dates_valid(workout, payload)
+        WorkoutPolicy.assert_update_dates_valid(workout, payload)
 
         workout = uow.workouts_repo.update(old=workout, updated=payload)
-
-        return WorkoutResponse.model_validate(workout)
 
     async def delete(self, uow: UnitOfWork, user: User, workout_id: int) -> None:
         workout = await WorkoutPolicy.assert_exists(

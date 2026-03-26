@@ -19,9 +19,7 @@ class WorkoutPolicy:
         return workout
 
     @staticmethod
-    async def assert_update_dates_valid(
-        workout: Workout, payload: WorkoutUpdate
-    ) -> None:
+    def assert_update_dates_valid(workout: Workout, payload: WorkoutUpdate) -> None:
         if payload.created_at is not None and payload.ended_at is not None:
             return
 
