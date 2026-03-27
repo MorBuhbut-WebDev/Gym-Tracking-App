@@ -11,7 +11,6 @@ from app.schemas import (
     ExerciseReorder,
     WorkoutCreate,
     WorkoutExerciseNested,
-    WorkoutExerciseResponse,
     WorkoutFilters,
     WorkoutNested,
     WorkoutResponse,
@@ -116,7 +115,7 @@ class WorkoutService:
 
     async def add_exercise(
         self, uow: UnitOfWork, user: User, workout_id: int, exercise_id: int
-    ) -> WorkoutExerciseResponse:
+    ) -> None:
         await WorkoutExercisePolicy.assert_accessible(
             exercises_repo=uow.exercises_repo,
             workouts_repo=uow.workouts_repo,
@@ -131,13 +130,7 @@ class WorkoutService:
             exercise_id=exercise_id,
         )
 
-        workout_exercise = await uow.workouts_exercises_repo.add_exercise(
-            workout_id, exercise_id
-        )
-
-        await uow.flush()
-
-        return WorkoutExerciseResponse.model_validate(workout_exercise)
+        await uow.workouts_exercises_repo.add_exercise(workout_id, exercise_id)
 
     async def delete_exercise(
         self, uow: UnitOfWork, user: User, workout_id: int, exercise_id: int
