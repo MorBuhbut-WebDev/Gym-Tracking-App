@@ -9,3 +9,6 @@ class WorkoutSetResponse(AppBaseModel):
     weight: Decimal | None
     reps: int | None
     notes: str | None
+    prev_weight: Decimal | None
+    prev_reps: int | None
+    prev_notes: str | None
