@@ -1,5 +1,5 @@
 from app.auth import User
-from app.db import UnitOfWork
+from app.db.unit_of_work import UnitOfWork
 from app.models import Workout
 from app.policies import (
     RoutineExercisePolicy,

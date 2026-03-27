@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.auth import User
-from app.db import UnitOfWork
+from app.db.unit_of_work import UnitOfWork
 from app.dependencies import get_uow, get_user
 from app.schemas import ExerciseCreate, ExerciseResponse, ExerciseUpdate
 from app.services import ExerciseService, get_exercises_service

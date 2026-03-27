@@ -8,7 +8,8 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import User, verify_access_token
-from app.db import AsyncSessionLocal, UnitOfWork
+from app.db import AsyncSessionLocal
+from app.db.unit_of_work import UnitOfWork
 from app.exceptions import UnauthorizedException, UnprocessableException
 from app.schemas import WorkoutFilters
 

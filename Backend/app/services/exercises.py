@@ -1,5 +1,6 @@
 from app.auth import User
-from app.db import UnitOfWork, catch_unique_violation
+from app.db import catch_unique_violation
+from app.db.unit_of_work import UnitOfWork
 from app.models import Exercise
 from app.policies import ExercisePolicy
 from app.schemas import ExerciseCreate, ExerciseResponse, ExerciseUpdate
