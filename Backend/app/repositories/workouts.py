@@ -25,6 +25,9 @@ class WorkoutDetailRow(BaseModel):
     weight: Decimal | None
     reps: int | None
     notes: str | None
+    prev_weight: Decimal | None
+    prev_reps: int | None
+    prev_notes: str | None
 
 
 class WorkoutPeriod(NamedTuple):
@@ -37,13 +40,34 @@ class WorkoutRepo(BaseRepo[Workout]):
         super().__init__(model=Workout, session=session)
 
     async def get_with_exercises_and_sets(
-        self, workout_id: int
+        self, workout_id: int, user_id: uuid.UUID
     ) -> list[WorkoutDetailRow]:
         rows = (
             (
                 await self._session.execute(
                     text(
                         """
+                    WITH workouts_with_prev AS (
+                        SELECT
+                            ws.set_id,
+                            LAG(ws.weight) OVER (
+                                PARTITION BY ws.exercise_id, ws.set_index
+                                ORDER BY w.created_at ASC
+                            ) AS prev_weight,
+                            LAG(ws.reps) OVER (
+                                PARTITION BY ws.exercise_id, ws.set_index
+                                ORDER BY w.created_at ASC
+                            ) AS prev_reps,
+                            LAG(ws.notes) OVER (
+                                PARTITION BY ws.exercise_id, ws.set_index
+                                ORDER BY w.created_at ASC
+                            ) AS prev_notes
+                        FROM workouts_sets ws
+                        JOIN workouts w
+                          ON ws.workout_id = w.workout_id
+                        WHERE w.user_id = :user_id
+                    )
+
                     SELECT
                         w.workout_id,
                         w.routine_id,
@@ -57,7 +81,10 @@ class WorkoutRepo(BaseRepo[Workout]):
                         ws.set_index,
                         ws.weight,
                         ws.reps,
-                        ws.notes
+                        ws.notes,
+                        p.prev_weight,
+                        p.prev_reps,
+                        p.prev_notes
                     FROM workouts_exercises we
                     JOIN workouts w
                       ON we.workout_id = w.workout_id
@@ -66,11 +93,13 @@ class WorkoutRepo(BaseRepo[Workout]):
                      AND ws.exercise_id = we.exercise_id
                     JOIN exercises e
                       ON e.exercise_id = we.exercise_id
+                    JOIN workouts_with_prev p
+                      ON p.set_id = ws.set_id
                     WHERE w.workout_id = :workout_id
                     ORDER BY we.exercise_index, ws.set_index
                     """
                     ),
-                    {"workout_id": workout_id},
+                    {"workout_id": workout_id, "user_id": user_id},
                 )
             )
             .mappings()
