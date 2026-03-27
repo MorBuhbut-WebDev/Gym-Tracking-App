@@ -48,8 +48,6 @@ class RoutineService:
 
         rows = await uow.routines_repo.get_with_exercises(routine.routine_id)
 
-        assert rows, "rows must not be empty"
-
         exercises: dict[int, RoutineExerciseNested] = {}
         for row in rows:
             exercise_id = row.exercise_id

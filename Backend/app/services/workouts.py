@@ -67,8 +67,6 @@ class WorkoutService:
         )
         rows = await uow.workouts_repo.get_with_exercises_and_sets(workout.workout_id)
 
-        assert rows, "rows can't be empty"
-
         exercises: dict[int, WorkoutExerciseNested] = {}
         for row in rows:
             exercise_id = row.exercise_id
