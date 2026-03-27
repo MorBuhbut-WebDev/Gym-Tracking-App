@@ -64,7 +64,9 @@ class WorkoutService:
         workout = await WorkoutPolicy.assert_exists(
             repo=uow.workouts_repo, user_id=user.user_id, workout_id=workout_id
         )
-        rows = await uow.workouts_repo.get_with_exercises_and_sets(workout.workout_id)
+        rows = await uow.workouts_repo.get_with_exercises_and_sets(
+            workout.workout_id, user.user_id
+        )
 
         exercises: dict[int, WorkoutExerciseNested] = {}
         for row in rows:
@@ -83,6 +85,9 @@ class WorkoutService:
                     weight=row.weight,
                     reps=row.reps,
                     notes=row.notes,
+                    prev_weight=row.prev_weight,
+                    prev_reps=row.prev_reps,
+                    prev_notes=row.prev_notes,
                 )
             )
 
