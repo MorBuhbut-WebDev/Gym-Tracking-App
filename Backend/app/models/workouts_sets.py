@@ -32,3 +32,23 @@ class WorkoutSet(Base):
             name="uq_set_per_exercise_per_workout",
         ),
     )
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        workout_id: int,
+        exercise_id: int,
+        set_index: int,
+        weight: Decimal | None,
+        reps: int | None,
+        notes: str | None,
+    ) -> "WorkoutSet":
+        return cls(
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+            set_index=set_index,
+            weight=weight,
+            reps=reps,
+            notes=notes,
+        )
