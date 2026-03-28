@@ -62,6 +62,20 @@ class WorkoutSetRepo(BaseRepo[WorkoutSet]):
             },
         )
 
+    async def get_sets_count(self, workout_id: int, exercise_id: int) -> int:
+        result = (
+            await self._session.execute(
+                select(func.count())
+                .select_from(WorkoutSet)
+                .where(
+                    (WorkoutSet.workout_id == workout_id)
+                    & (WorkoutSet.exercise_id == exercise_id)
+                )
+            )
+        ).scalar()
+
+        return 0 if result is None else result
+
     async def generate_sets(self, workout_id: int, routine_id: int) -> None:
         await self._session.execute(
             text(
