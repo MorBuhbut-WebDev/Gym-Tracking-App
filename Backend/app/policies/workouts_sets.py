@@ -1,6 +1,6 @@
 import uuid
 
-from app.exceptions import NotFoundException
+from app.exceptions import BadRequestException, NotFoundException
 from app.models import Workout, WorkoutSet
 from app.policies import WorkoutPolicy
 from app.repositories import WorkoutRepo, WorkoutSetRepo
@@ -28,3 +28,14 @@ class WorkoutSetPolicy:
             )
 
         return workout, workout_set
+
+    @staticmethod
+    async def assert_set_deletable(
+        workouts_sets_repo: WorkoutSetRepo, workout_id: int, exercise_id: int
+    ) -> None:
+        count = await workouts_sets_repo.get_sets_count(workout_id, exercise_id)
+
+        if count < 2:
+            raise BadRequestException(
+                "Cannot delete the only remaining set for this exercise"
+            )
