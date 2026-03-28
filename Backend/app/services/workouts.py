@@ -14,7 +14,9 @@ from app.schemas import (
     WorkoutFilters,
     WorkoutNested,
     WorkoutResponse,
+    WorkoutSetCreate,
     WorkoutSetNested,
+    WorkoutSetResponse,
     WorkoutUpdate,
 )
 
@@ -170,6 +172,26 @@ class WorkoutService:
         )
 
         await uow.workouts_exercises_repo.reorder_exercises(workout_id, payload)
+
+    async def add_set(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        workout_id: int,
+        exercise_id: int,
+        payload: WorkoutSetCreate,
+    ) -> WorkoutSetResponse:
+        await WorkoutExercisePolicy.assert_link_exists(
+            workouts_repo=uow.workouts_repo,
+            workouts_exercises_repo=uow.workouts_exercises_repo,
+            user_id=user.user_id,
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+        )
+
+        set = await uow.workouts_sets_repo.add_set(workout_id, exercise_id, payload)
+
+        return WorkoutSetResponse.model_validate(set)
 
 
 def get_workouts_service() -> WorkoutService:
