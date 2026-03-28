@@ -3,10 +3,12 @@ from fastapi import APIRouter, Depends
 from app.auth import User
 from app.db.unit_of_work import UnitOfWork
 from app.dependencies import get_uow, get_user
+from app.routes.workouts_sets import workouts_sets_router
 from app.schemas import ExerciseReorder
 from app.services import WorkoutService, get_workouts_service
 
 workouts_exercises_router = APIRouter(prefix="/{workout_id}/exercises")
+workouts_exercises_router.include_router(workouts_sets_router)
 
 
 @workouts_exercises_router.post("/{exercise_id}", status_code=204)
