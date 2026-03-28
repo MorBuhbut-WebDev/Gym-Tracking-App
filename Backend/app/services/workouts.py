@@ -14,7 +14,7 @@ from app.schemas import (
     WorkoutFilters,
     WorkoutNested,
     WorkoutResponse,
-    WorkoutSetResponse,
+    WorkoutSetNested,
     WorkoutUpdate,
 )
 
@@ -79,7 +79,7 @@ class WorkoutService:
                     sets=[],
                 )
             exercises[exercise_id].sets.append(
-                WorkoutSetResponse(
+                WorkoutSetNested(
                     set_id=row.set_id,
                     set_index=row.set_index,
                     weight=row.weight,
