@@ -6,6 +6,7 @@ from app.policies import (
     RoutinePolicy,
     WorkoutExercisePolicy,
     WorkoutPolicy,
+    WorkoutSetPolicy,
 )
 from app.schemas import (
     ExerciseReorder,
@@ -192,6 +193,29 @@ class WorkoutService:
         set = await uow.workouts_sets_repo.add_set(workout_id, exercise_id, payload)
 
         return WorkoutSetResponse.model_validate(set)
+
+    async def delete_set(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        workout_id: int,
+        exercise_id: int,
+        set_id: int,
+    ) -> None:
+        _, workout_set = await WorkoutSetPolicy.assert_link_exists(
+            workouts_repo=uow.workouts_repo,
+            workouts_sets_repo=uow.workouts_sets_repo,
+            user_id=user.user_id,
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+            set_id=set_id,
+        )
+
+        await uow.workouts_sets_repo.delete(workout_set)
+        await uow.flush()
+        await uow.workouts_sets_repo.shift_indices_after_delete(
+            workout_id, exercise_id, workout_set.set_index
+        )
 
 
 def get_workouts_service() -> WorkoutService:
