@@ -18,6 +18,7 @@ from app.schemas import (
     WorkoutSetCreate,
     WorkoutSetNested,
     WorkoutSetResponse,
+    WorkoutSetUpdate,
     WorkoutUpdate,
 )
 
@@ -112,7 +113,7 @@ class WorkoutService:
 
         WorkoutPolicy.assert_update_dates_valid(workout, payload)
 
-        workout = uow.workouts_repo.update(old=workout, updated=payload)
+        uow.workouts_repo.update(old=workout, updated=payload)
 
     async def delete(self, uow: UnitOfWork, user: User, workout_id: int) -> None:
         workout = await WorkoutPolicy.assert_exists(
@@ -222,6 +223,26 @@ class WorkoutService:
         await uow.workouts_sets_repo.shift_indices_after_delete(
             workout_id, exercise_id, workout_set.set_index
         )
+
+    async def update_set(
+        self,
+        uow: UnitOfWork,
+        user: User,
+        workout_id: int,
+        exercise_id: int,
+        set_id: int,
+        payload: WorkoutSetUpdate,
+    ) -> None:
+        _, workout_set = await WorkoutSetPolicy.assert_link_exists(
+            workouts_repo=uow.workouts_repo,
+            workouts_sets_repo=uow.workouts_sets_repo,
+            user_id=user.user_id,
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+            set_id=set_id,
+        )
+
+        uow.workouts_sets_repo.update(old=workout_set, updated=payload)
 
 
 def get_workouts_service() -> WorkoutService:
