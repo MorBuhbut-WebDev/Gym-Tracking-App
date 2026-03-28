@@ -211,6 +211,12 @@ class WorkoutService:
             set_id=set_id,
         )
 
+        await WorkoutSetPolicy.assert_set_deletable(
+            workouts_sets_repo=uow.workouts_sets_repo,
+            workout_id=workout_id,
+            exercise_id=exercise_id,
+        )
+
         await uow.workouts_sets_repo.delete(workout_set)
         await uow.flush()
         await uow.workouts_sets_repo.shift_indices_after_delete(
