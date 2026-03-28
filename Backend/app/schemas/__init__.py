@@ -15,4 +15,9 @@ from .workouts import (
     WorkoutUpdate,
 )
 from .workouts_exercises import WorkoutExerciseNested
-from .workouts_sets import WorkoutSetCreate, WorkoutSetNested, WorkoutSetResponse
+from .workouts_sets import (
+    WorkoutSetCreate,
+    WorkoutSetNested,
+    WorkoutSetResponse,
+    WorkoutSetUpdate,
+)
