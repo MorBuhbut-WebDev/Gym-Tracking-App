@@ -33,6 +33,35 @@ class WorkoutSetRepo(BaseRepo[WorkoutSet]):
             )
         )
 
+    async def get_link(
+        self, workout_id: int, exercise_id: int, set_id: int
+    ) -> WorkoutSet | None:
+        return await self.get(
+            condition=(WorkoutSet.workout_id == workout_id)
+            & (WorkoutSet.exercise_id == exercise_id)
+            & (WorkoutSet.set_id == set_id)
+        )
+
+    async def shift_indices_after_delete(
+        self, workout_id: int, exercise_id: int, deleted_index: int
+    ) -> None:
+        await self._session.execute(
+            text(
+                """
+            UPDATE workouts_sets
+            SET set_index = set_index - 1
+            WHERE workout_id = :workout_id
+              AND exercise_id = :exercise_id
+              AND set_index > :deleted_index
+            """
+            ),
+            {
+                "workout_id": workout_id,
+                "exercise_id": exercise_id,
+                "deleted_index": deleted_index,
+            },
+        )
+
     async def generate_sets(self, workout_id: int, routine_id: int) -> None:
         await self._session.execute(
             text(
