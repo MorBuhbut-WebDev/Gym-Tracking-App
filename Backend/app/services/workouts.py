@@ -193,6 +193,8 @@ class WorkoutService:
 
         set = await uow.workouts_sets_repo.add_set(workout_id, exercise_id, payload)
 
+        await uow.flush()
+
         return WorkoutSetResponse.model_validate(set)
 
     async def delete_set(
