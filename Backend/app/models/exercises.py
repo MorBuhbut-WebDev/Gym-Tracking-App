@@ -1,8 +1,8 @@
 import uuid
 from datetime import date
 
-from sqlalchemy import Date, ForeignKey, Integer, String, UniqueConstraint, func, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Date, ForeignKey, Integer, String, func, text
+from sqlalchemy.dialects.postgresql import UUID, ExcludeConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
@@ -27,8 +27,12 @@ class Exercise(Base):
     exercise_name: Mapped[str] = mapped_column(String(36))
 
     __table_args__ = (
-        UniqueConstraint(
-            "user_id", "exercise_name", "endda", name="uq_user_endda_exercise_name"
+        ExcludeConstraint(
+            ("user_id", "="),
+            ("exercise_name", "="),
+            (text("daterange(begda, endda, '[)')"), "&&"),
+            name="exclude_exercise_overlap",
+            using="gist",
         ),
     )
 
