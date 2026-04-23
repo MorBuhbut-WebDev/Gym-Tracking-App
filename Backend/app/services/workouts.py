@@ -140,6 +140,9 @@ class WorkoutService:
         )
 
         await uow.workouts_exercises_repo.add_exercise(workout_id, exercise_id)
+        await uow.workouts_sets_repo.add_set(
+            workout_id, exercise_id, WorkoutSetCreate()
+        )
 
     async def delete_exercise(
         self, uow: UnitOfWork, user: User, workout_id: int, exercise_id: int
